@@ -11,7 +11,6 @@ import {
 
 import { IMainMenu } from '@jupyterlab/mainmenu';
 
-import { requestAPI } from './handler';
 import { NB2Slide } from './nb2slide';
 
 const activateReacttWidgetasync = async (
@@ -30,17 +29,6 @@ const activateReacttWidgetasync = async (
   )
 
   console.log("NB2Slide loaded", nb2slide)
-
-  requestAPI<any>('get_example')
-    .then(data => {
-      console.log(data);
-    })
-    .catch(reason => {
-      console.error(
-        `The nb2slide server extension appears to be missing.\n${reason}`
-      );
-    });
-
 }
 
 

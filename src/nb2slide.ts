@@ -9,6 +9,7 @@ import { SlideViewWidget } from './slideviewWidget';
 import { MainAreaWidget } from '@jupyterlab/apputils';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
+import { bundleStaticNotebookCells } from "./notebookUtils";
 
 export class NB2Slide {
     app: JupyterFrontEnd;
@@ -59,7 +60,7 @@ export class NB2Slide {
                 //@ts-ignore
                 const cells: Array<Cell> = this.notebookTools.activeNotebookPanel.content.widgets
                 // upload the notebook to the back-end
-                // this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
+                this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
 
                 // Update the React widget
                 this.widgetContent.update()
