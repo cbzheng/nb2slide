@@ -1,0 +1,74 @@
+#nb-view {
+    width: 45vw;
+    height: 90vh;
+    overflow-y: scroll;
+    padding: 2rem;
+    margin: 1rem;
+    border: 2px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    border-radius: 0.5rem;
+    align-self: flex-start;
+}
+
+#nb-cells {
+    margin-top: 2rem;
+    margin-right: 2rem;
+}
+
+.nb-cell {
+    margin-top: 0.5rem;
+    border: 2px solid #ccc;
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    margin-right: 5px;
+
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#nb-by-slide-view {
+    display: flex;
+    flex-direction: row;
+}
+
+#slide-view {
+    width: 50%;
+    height: 90%;
+    overflow-y: scroll;
+    padding: 2rem;
+    margin: 1rem;
+    border: 2px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    border-radius: 0.5rem;
+}
+
+#link-view {
+    width: 30vw;
+    height: 90vh;
+}
+
+#present-btn {
+    position: sticky;
+    bottom: 0;
+    text-align: -webkit-right;
+}

@@ -1,0 +1,9 @@
+.slide-box {
+    width: 80%;
+    height: 12rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 10%;
+    overflow-y: hidden;
+}
