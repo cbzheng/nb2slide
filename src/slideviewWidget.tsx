@@ -5,22 +5,24 @@ import { APISlideInfo } from "./mockdata"
 import "../style/slidewidget.css"
 import { StaticNotebookCell } from "./notebookUtils";
 import { requestAPI } from "./handler";
+import { SlideAPIInfo } from "./types/slideTypes";
 
 export class SlideViewWidget extends ReactWidget {
+    slides: SlideAPIInfo
+
     constructor() {
         super();
+        this.slides = APISlideInfo   
     }
 
     async updateNotebookInfo(cells: Array<StaticNotebookCell>) {
-        // await uploadNotebook(cells)
-        console.log("upload the notebook")
         const data  =JSON.stringify({"notebook": cells})
-        requestAPI<any>('get_slides', {
+        await requestAPI<any>('get_slides', {
             body: data,
             method: "POST"
           })
             .then(data => {
-              console.log(data);
+              this.slides = JSON.parse(data)
             })
             .catch(reason => {
               console.error(
@@ -34,7 +36,7 @@ export class SlideViewWidget extends ReactWidget {
             <div id={'slide-deck-widget'}>
                 {/* test: update render */}
                 {/* <h1>{(new Date()).getSeconds()}</h1> */}
-                <SlideViewer slides={APISlideInfo} />
+                <SlideViewer slides={this.slides} />
             </div>
         )
     }

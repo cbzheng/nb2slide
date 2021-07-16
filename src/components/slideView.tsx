@@ -1,27 +1,37 @@
-import React from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import '../../style/nbview.css'
 import '../../style/slideview.css'
-import { SlideReducerState } from "../types/slideTypes";
+import slideReducer, { slideReducerInitialState } from '../reducer/slidesReducer';
+import { SlideAPIInfo } from "../types/slideTypes";
 
 interface IProps {
-    slides: SlideReducerState
+    slides: SlideAPIInfo
 }
 
 function SlideViewer(props: IProps) {
-    const slideDeck = props.slides.sectionTitles.map(title => {
-        const points = props.slides.sectionPoints[title].map(point => {
-            return (<li>{point}</li>)
-        })
+    const [slideState, slideInfoDispatch] = useReducer(slideReducer, slideReducerInitialState)
+    const [slideDeck, setSlideDeck] = useState(<></>)
 
-        return (
-            <div className={"slide-box"}>
-                <h6>{title}</h6>
-                <ul>
-                    {points}
-                </ul>
-            </div>
+    useEffect(() => {
+        slideInfoDispatch({ type: "updateSlides", payload: props.slides })
+
+        //@ts-ignore
+        setSlideDeck(slideState.sectionTitles.map(title => {
+            const points = slideState.sectionPoints[title].map(point => {
+                return (<li>{point}</li>)
+            })
+
+            return (
+                <div className={"slide-box"}>
+                    <h6>{title}</h6>
+                    <ul>
+                        {points}
+                    </ul>
+                </div>
+            )
+        })
         )
-    })
+    }, [props.slides])
 
     return (
         <>

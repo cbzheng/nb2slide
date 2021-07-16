@@ -56,11 +56,11 @@ export class NB2Slide {
         commands.addCommand(this.command, {
             label: 'Generate slides',
             caption: 'Generate slides',
-            execute: (args: any) => {
+            execute: async (args: any) => {
                 //@ts-ignore
                 const cells: Array<Cell> = this.notebookTools.activeNotebookPanel.content.widgets
                 // upload the notebook to the back-end
-                this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
+                await this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
 
                 // Update the React widget
                 this.widgetContent.update()
