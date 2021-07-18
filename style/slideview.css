@@ -1,9 +1,43 @@
-.slide-box {
-    width: 80%;
-    height: 12rem;
+.sl-box {
+    width: 12rem;
+    height: 9rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
-    padding: 10%;
-    overflow-y: hidden;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin-right: 1rem;
+    overflow-y: clip;
+    flex-shrink: 0;
+}
+
+.icon-edit:hover {
+    color: #ff7f00;
+    transition: 0.2s;
+}
+
+.icon-add:hover {
+    color: #33a02c;
+    transition: 0.2;
+}
+
+.icon-minus:hover {
+    color: #e31a1c;
+    transition: 0.2s;
+}
+
+.edit-icon {
+    color: #cccccc;
+    margin: 3px;
+    cursor:pointer
+}
+
+.edit-icon-list {
+    display: flex;
+    position: sticky;
+    bottom: -6px;
+    right: -1px;
+    justify-content: flex-end;
 }

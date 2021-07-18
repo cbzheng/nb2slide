@@ -1,7 +1,7 @@
-#slide-deck-widget {
+#slides-deck-widget {
     display: flex;
     justify-content: flex-end;
-    flex-direction: row;
+    flex-direction: column;
     background-color: white;
     height: inherit;
 }

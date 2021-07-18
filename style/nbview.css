@@ -1,27 +1,3 @@
-#nb-view {
-    width: 45vw;
-    height: 90vh;
-    overflow-y: scroll;
-    padding: 2rem;
-    margin: 1rem;
-    border: 2px solid #ccc;
-    box-shadow: 0 0 5px #ccc;
-    border-radius: 0.5rem;
-    align-self: flex-start;
-}
-
-#nb-cells {
-    margin-top: 2rem;
-    margin-right: 2rem;
-}
-
-.nb-cell {
-    margin-top: 0.5rem;
-    border: 2px solid #ccc;
-    border-radius: 1rem;
-    padding: 1rem;
-}
-
 /* width */
 ::-webkit-scrollbar {
     width: 10px;
@@ -46,20 +22,21 @@
     background: #555;
 }
 
-#nb-by-slide-view {
-    display: flex;
-    flex-direction: row;
-}
-
-#slide-view {
-    width: 50%;
-    height: 90%;
-    overflow-y: scroll;
+#slideview {
+    width: 90%;
+    height: 20%;
+    overflow-x: scroll;
+    overflow-y: clip;
     padding: 2rem;
     margin: 1rem;
     border: 2px solid #ccc;
     box-shadow: 0 0 5px #ccc;
     border-radius: 0.5rem;
+}
+
+#slide-deck {
+    display: flex;
+    flex-direction: row;
 }
 
 #link-view {
