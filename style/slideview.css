@@ -1,6 +1,6 @@
 .sl-box {
-    width: 12rem;
-    height: 9rem;
+    width: 24rem;
+    height: 18rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
@@ -9,8 +9,9 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     margin-right: 1rem;
-    overflow-y: clip;
+    overflow-y: auto;
     flex-shrink: 0;
+    position: relative;
 }
 
 .icon-edit:hover {
@@ -36,8 +37,8 @@
 
 .edit-icon-list {
     display: flex;
-    position: sticky;
-    bottom: -6px;
-    right: -1px;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
     justify-content: flex-end;
 }

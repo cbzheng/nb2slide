@@ -24,7 +24,7 @@
 
 #slideview {
     width: 90%;
-    height: 20%;
+    height: 40%;
     overflow-x: scroll;
     overflow-y: clip;
     padding: 2rem;
