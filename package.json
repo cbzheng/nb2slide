@@ -55,6 +55,8 @@
     "@jupyterlab/notebook": "^3.0.11",
     "@jupyterlab/services": "^6.0.0",
     "@jupyterlab/ui-components": "^3.0.7",
+    "@types/react-bootstrap": "^0.32.26",
+    "bootstrap": "^5.0.2",
     "react-bootstrap": "^1.6.1"
   },
   "devDependencies": {

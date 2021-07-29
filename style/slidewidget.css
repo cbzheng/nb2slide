@@ -1,7 +1,6 @@
 #slides-deck-widget {
     display: flex;
-    justify-content:flex-start;
-    flex-direction: column;
+    flex-direction: row;
     background-color: white;
     height: inherit;
 }

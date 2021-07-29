@@ -34,8 +34,6 @@ export class SlideViewWidget extends ReactWidget {
     render(): JSX.Element {
         return (
             <div id={'slides-deck-widget'}>
-                {/* test: update render */}
-                {/* <h1>{(new Date()).getSeconds()}</h1> */}
                 <SlideViewer slides={this.slides} />
             </div>
         )

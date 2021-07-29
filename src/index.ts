@@ -3,6 +3,8 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {
   INotebookTools,
   INotebookTracker,

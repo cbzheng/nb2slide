@@ -1,17 +1,25 @@
 .sl-box {
-    width: 24rem;
-    height: 18rem;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    margin-right: 1rem;
-    overflow-y: auto;
-    flex-shrink: 0;
     position: relative;
+    width: 99%;
+    padding-top: 75%;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    padding-left: 2rem;
+    padding-top: 1rem;
+}
+
+#title {
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 .icon-edit:hover {
@@ -37,8 +45,79 @@
 
 .edit-icon-list {
     display: flex;
-    position: absolute;
+    position: sticky;
     bottom: 1rem;
     right: 1rem;
     justify-content: flex-end;
 }
+
+#optionsView {
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    background-color: #eee;
+}
+
+#nav-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+  }
+  
+ #nav-item {
+    float: right;
+    align-self: center;
+  }
+  
+  li a, .dropbtn {
+    display: inline-block;
+    color: #555;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  nav-item a:hover, .nav-dropdown:hover .dropbtn {
+    transition: 0.2s;
+    
+  }
+  
+  li.dropdown {
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .dropdown-content a:hover {background-color: #f1f1f1;}
+  
+  .nav-dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  #edit-panel {
+    flex-direction: column;
+    display: flex;
+    border: 2px solid #ccc;
+    border-radius: 0.5rem;
+    background: white;
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
