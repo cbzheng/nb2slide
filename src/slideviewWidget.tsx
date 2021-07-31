@@ -9,13 +9,16 @@ import { SlideAPIInfo } from "./types/slideTypes";
 
 export class SlideViewWidget extends ReactWidget {
     slides: SlideAPIInfo
+    notebookCells: Array<StaticNotebookCell>
 
     constructor() {
         super();
-        this.slides = APISlideInfo   
+        this.slides = APISlideInfo 
+        this.notebookCells = [] 
     }
 
     async updateNotebookInfo(cells: Array<StaticNotebookCell>) {
+      this.notebookCells = cells
         const data  =JSON.stringify({"notebook": cells})
         await requestAPI<any>('get_slides', {
             body: data,
@@ -34,7 +37,7 @@ export class SlideViewWidget extends ReactWidget {
     render(): JSX.Element {
         return (
             <div id={'slides-deck-widget'}>
-                <SlideViewer slides={this.slides} />
+                <SlideViewer slides={this.slides} cells={this.notebookCells} />
             </div>
         )
     }

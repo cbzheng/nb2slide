@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../../style/nbview.css'
 import '../../style/slideview.css'
 import { slideReducerInitialState } from '../reducer/slidesReducer';
@@ -7,16 +7,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons'
 import OptionsView from './optionsView';
 import ListGroup from 'react-bootstrap/ListGroup'
+import Accordion from 'react-bootstrap/Accordion'
+import Slide from './slide';
+import { StaticNotebookCell } from '../notebookUtils';
+import NotebookVisView from './notebookVisView';
 
 interface IProps {
-    slides: SlideAPIInfo
+    slides: SlideAPIInfo,
+    cells: Array<StaticNotebookCell>
 }
 
 function SlideViewer(props: IProps) {
     const [slideState, setSlideState] = useState(slideReducerInitialState)
     const [slideHierarchy, setSlideHierarchy] = useState(<></>)
     const [slideDeck, setSlideDeck] = useState(<></>)
-    const [subtitleVisible, setSubtitleVisible] = useState({})
+    const [currentTitle, setCurrentTitle] = useState("")
+    const [currentSubTitle, setCurrentSubTitle] = useState("")
+    const hierarchyTitleRefs = useRef([])
 
     useEffect(() => {
         // slideInfoDispatch({ type: "updateSlides", payload: props.slides })
@@ -28,76 +35,70 @@ function SlideViewer(props: IProps) {
                 state.sectionTitles.push(section.title)
                 state.sectionPoints[section.title] = props.slides[section.title].points
                 state.sectionCodeCells[section.title] = props.slides[section.title].cells
-                setSubtitleVisible({
-                    ...subtitleVisible,
-                    [section.title]: false
-                })
             }
-        })     
-         
+        })
+
         setSlideState(state)
-
-        console.log("upload slides", slideState)
-
         // slide structure
-        const strucutreItems = slideState.sectionTitles.map(title => {
+        const strucutreItems = slideState.sectionTitles.map((title, idx) => {
             const subtitles = slideState.sectionSubtitles[title]
-            console.log(subtitles)
             const subtitleList = subtitles.map(subtitle => {
-                <ListGroup.Item>
-                    {subtitle}
-                </ListGroup.Item>
+                return (
+                    <ListGroup.Item>
+                        <a className='slide-link' href={'#section-' + title + '-sub-' + subtitle}> {subtitle}</a>
+                    </ListGroup.Item>
+                )
             })
-
             return (
-                <ListGroup.Item action onClick={() => {
-                    console.log("set visibility")
-                    setSubtitleVisible({
-                        ...subtitleVisible,
-                        // @ts-ignore
-                        [title]: !subtitleVisible[title]
-                    });
-                    console.log(subtitleVisible)
-                }}>
-                    {title}
-                    {
-                        // @ts-ignore
-                        subtitleVisible[title] ?
-                            <ListGroup variant='flush'>
-                                {subtitleList}
-                            </ListGroup> : null
-                    }
-                </ListGroup.Item>
+                <Accordion.Item
+                    eventKey={idx.toString()}
+                >
+                    <Accordion.Button ref={(el: any) => (hierarchyTitleRefs.current[idx] = el)}><a className='slide-link' href={'#section-' + title}>{title}</a></Accordion.Button>
+                    <Accordion.Body>
+                        <ListGroup variant='flush'>
+                            {subtitleList}
+                        </ListGroup>
+                    </Accordion.Body>
+                </Accordion.Item>
             )
         })
         setSlideHierarchy(
-            <ListGroup variant='flush'>
+            <Accordion>
                 {strucutreItems}
-            </ListGroup>
+            </Accordion>
         )
 
         // slides
         //@ts-ignore
-        setSlideDeck(slideState.sectionTitles.map(title => {
-            return slideState.sectionSubtitles[title].map(subtitle => {
-                const points = slideState.sectionPoints[title][subtitle].map(point => {
-                    return (<li>{point}</li>)
-                })
+        setSlideDeck(slideState.sectionTitles.map((title, tIdx) => {
+            return slideState.sectionSubtitles[title].map((subtitle, idx) => {
                 return (
-                    <div className={"sl-box"}>
-                        <div className={"slide"}>
-                            <h3>{title}</h3>
-                            <h4>{subtitle}</h4>
-                            <ul>
-                                {points}
-                            </ul>
-                        </div>
+                    <div id={idx === 0 ? 'section-' + title : ''}>
+                        <Slide
+                            title={title}
+                            subtitle={subtitle}
+                            points={slideState.sectionPoints[title][subtitle]}
+                            select={currentTitle === title && currentSubTitle === subtitle}
+                            handleClick={() => {
+                                if(currentTitle === title) {
+                                    if (currentSubTitle === subtitle)
+                                        return
+                                    setCurrentSubTitle(subtitle)
+                                    return
+                                }
+                                setCurrentTitle(title)
+                                setCurrentSubTitle(subtitle)
+                                hierarchyTitleRefs.current[tIdx].click();
+                                console.log(hierarchyTitleRefs)
+                            }}
+
+                        />
                     </div>
                 )
             })
         })
         )
-    }, [props.slides])
+    }, [props.slides, currentTitle, currentSubTitle])
 
     return (
         <>
@@ -106,7 +107,7 @@ function SlideViewer(props: IProps) {
                 <div id='main-panel'>
                     <div id='explore-view'>
                         <div id='vis-panel'>
-
+                            <NotebookVisView cells={props.cells} />
                         </div>
                         <div id='hierarchy-panel'>
                             {slideHierarchy}
