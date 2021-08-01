@@ -11,10 +11,12 @@ import Accordion from 'react-bootstrap/Accordion'
 import Slide from './slide';
 import { StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
+import ExampleView from './exampleView';
 
 interface IProps {
     slides: SlideAPIInfo,
-    cells: Array<StaticNotebookCell>
+    cells: Array<StaticNotebookCell>,
+    navNBCb: Function
 }
 
 function SlideViewer(props: IProps) {
@@ -53,7 +55,11 @@ function SlideViewer(props: IProps) {
                 <Accordion.Item
                     eventKey={idx.toString()}
                 >
-                    <Accordion.Button ref={(el: any) => (hierarchyTitleRefs.current[idx] = el)}><a className='slide-link' href={'#section-' + title}>{title}</a></Accordion.Button>
+                    <Accordion.Button ref={(el: any) => (hierarchyTitleRefs.current[idx] = el)}>
+                        <a className='slide-link' href={'#section-' + title}>
+                            {title}
+                        </a>
+                    </Accordion.Button>
                     <Accordion.Body>
                         <ListGroup variant='flush'>
                             {subtitleList}
@@ -107,14 +113,20 @@ function SlideViewer(props: IProps) {
                 <div id='main-panel'>
                     <div id='explore-view'>
                         <div id='vis-panel'>
-                            <NotebookVisView cells={props.cells} />
+                            <NotebookVisView
+                                cells={props.cells}
+                                navNBCb={props.navNBCb}
+                                slidesMapToCells={slideState.sectionCodeCells}
+                                selectedTitle={currentTitle}
+                                selectedSubTitle={currentSubTitle}
+                            />
                         </div>
                         <div id='ref-panel'>
                             <div id='hierarchy-panel'>
                                 {slideHierarchy}
                             </div>
                             <div id='prompt-panel'>
-
+                                <ExampleView currentSubTitle={currentSubTitle} currentTitle={currentTitle} />
                             </div>
                         </div>
                     </div>

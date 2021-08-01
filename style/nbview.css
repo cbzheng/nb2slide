@@ -27,7 +27,7 @@
 
 
 #slideview {
-    width: 60%;
+    width: 55%;
     height: 85vh;
     overflow-x: scroll;
     overflow-y: scroll;
@@ -39,11 +39,11 @@
 }
 
 #vis-panel {
-    width: 20%;
+    width: 30%;
 }
 
 #ref-panel {
-    width: 80%;
+    width: 70%;
     margin-top: 1rem;
     margin-bottom: 5rem;
     /* border-left: 1px solid #ccc;; */
@@ -75,7 +75,7 @@
 }
 
 #explore-view {
-    width: 40%;
+    width: 45%;
     display: flex;
     flex-direction: row;
 }

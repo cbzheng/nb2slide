@@ -7,15 +7,23 @@ export type StaticNotebookCell = {
     cell_type: string
 }
 
-export const bundleStaticNotebookCells = (cellWidgets: Array<Cell>): Array<StaticNotebookCell> => {
-    return cellWidgets.map((widget, i) => {
+export const bundleStaticNotebookCells = (cellWidgets: {[idx: number]: Cell}): Array<StaticNotebookCell> => {
+    return Object.entries(cellWidgets).map(([i, widget]) => {
         return {
-            index: i,
+            index: parseInt(i),
             outputElements: getOutputAreaElements(widget.node),
             source: widget.model.value.text,
             cell_type: widget.model.type,
         }
     })
+}
+
+export function computeCurCellsIdx (cells: Array<Cell>) {
+    let index : {[idx: number]: Cell} = {}
+    cells.forEach((cell, idx) => {
+        index[idx] = cell
+    })
+    return index
 }
 
 // ref: https://github.com/tho121/toon_note 

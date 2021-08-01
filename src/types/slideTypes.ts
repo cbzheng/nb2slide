@@ -1,9 +1,9 @@
-export type SlideCellRelation = { cell_idx: number, sim_ratio: number }
+export type SlideCellRelation = { cell_idx: number, dist: number }
 
 export type SlideAPIInfo = {
     [title: string]: {
         points: { [subtitle: string]: Array<string> },
-        cells: { [subtitle: string]: Array<SlideCellRelation> },
+        cells: { [subtitle: string]: Array<Array<SlideCellRelation>> },
     }
 }
 
@@ -19,7 +19,7 @@ export type SlideReducerState = {
         [title: string]: Array<string>
     }
     sectionPoints: { [title: string]: { [subtitle: string]: Array<string> } },
-    sectionCodeCells: { [title: string]: { [subtitle: string]: Array<SlideCellRelation> } },
+    sectionCodeCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
 }
 
 export type SlideReducerAction =

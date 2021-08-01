@@ -10,6 +10,7 @@ import { SlideAPIInfo } from "./types/slideTypes";
 export class SlideViewWidget extends ReactWidget {
     slides: SlideAPIInfo
     notebookCells: Array<StaticNotebookCell>
+    navNBCb: Function
 
     constructor() {
         super();
@@ -25,7 +26,9 @@ export class SlideViewWidget extends ReactWidget {
             method: "POST"
           })
             .then(data => {
+              // console.log(data)
               this.slides = JSON.parse(data)
+              console.log(this.slides)
             })
             .catch(reason => {
               console.error(
@@ -34,10 +37,14 @@ export class SlideViewWidget extends ReactWidget {
             });
     }
 
+    setNavNBCb(cb: Function) {
+      this.navNBCb = cb;
+    }
+
     render(): JSX.Element {
         return (
             <div id={'slides-deck-widget'}>
-                <SlideViewer slides={this.slides} cells={this.notebookCells} />
+                <SlideViewer slides={this.slides} cells={this.notebookCells} navNBCb={this.navNBCb} />
             </div>
         )
     }

@@ -2,6 +2,7 @@ import { JupyterFrontEnd } from "@jupyterlab/application";
 import {
     INotebookTools,
     INotebookTracker,
+    NotebookPanel
     // NotebookActions, Notebook, NotebookPanel, INotebookModel
 } from '@jupyterlab/notebook';
 import { SlideViewWidget } from './slideviewWidget';
@@ -9,7 +10,8 @@ import { SlideViewWidget } from './slideviewWidget';
 import { MainAreaWidget } from '@jupyterlab/apputils';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
-import { bundleStaticNotebookCells } from "./notebookUtils";
+import { bundleStaticNotebookCells, computeCurCellsIdx } from "./notebookUtils";
+import { Cell } from '@jupyterlab/cells';
 
 export class NB2Slide {
     app: JupyterFrontEnd;
@@ -18,7 +20,9 @@ export class NB2Slide {
     notebookTools: INotebookTools;
     widgetContent: SlideViewWidget;
     widget: MainAreaWidget;
-    command: string
+    command: string;
+    notebookPanel: NotebookPanel;
+    cellsIndex: {[idx: number]: Cell}
 
     constructor(
         app: JupyterFrontEnd,
@@ -59,8 +63,18 @@ export class NB2Slide {
             execute: async (args: any) => {
                 //@ts-ignore
                 const cells: Array<Cell> = this.notebookTools.activeNotebookPanel.content.widgets
+                this.notebookPanel = this.notebookTools.activeNotebookPanel
+                this.cellsIndex = computeCurCellsIdx(cells)
                 // upload the notebook to the back-end
                 await this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
+
+                // ref: https://github.com/jupyterlab/jupyterlab-toc/blob/9951a4d8caa8fe6c42c86836afc9c0ecf5e3d41d/src/generators/notebook/index.ts
+                const navNBCallback = (cellIdx: number) => {
+                    this.notebookPanel.content.activeCellIndex = cellIdx
+                    this.cellsIndex[cellIdx].node.scrollIntoView();
+                }
+
+                this.widgetContent.setNavNBCb(navNBCallback)
 
                 // Update the React widget
                 this.widgetContent.update()
