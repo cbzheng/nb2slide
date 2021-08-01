@@ -1,20 +1,19 @@
 /* width */
 ::-webkit-scrollbar {
-    width: 10px;
-    margin-right: 5px;
-
+    width: 6px;
+    margin-right: 3px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: #888;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 /* Handle on hover */
@@ -34,20 +33,35 @@
     overflow-y: scroll;
     padding: 2rem;
     margin: 1rem;
-    border: 2px solid #ccc;
+    border: 1px solid #ccc;
     box-shadow: 0 0 5px #ccc;
     border-radius: 0.5rem;
 }
 
 #vis-panel {
-    width: 40%;
+    width: 20%;
+}
+
+#ref-panel {
+    width: 80%;
+    margin-top: 1rem;
+    margin-bottom: 5rem;
+    /* border-left: 1px solid #ccc;; */
+}
+
+#prompt-panel {
+    height: 50%;
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+    margin-right: 0.5rem;
+    margin-bottom: 3rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
 }
 
 #hierarchy-panel {
-    width: 60%;
-    margin-top: 2rem;
-    margin-bottom: 5rem;
-    border-left: 1px solid #ccc;;
+    height: 50%;
+    overflow-y:scroll;
 }
 
 #slide-deck {
@@ -69,6 +83,7 @@
 #link-view {
     width: 30vw;
     height: 90vh;
+    overflow-y: scroll;
 }
 
 #present-btn {

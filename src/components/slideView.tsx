@@ -5,7 +5,7 @@ import { slideReducerInitialState } from '../reducer/slidesReducer';
 import { SlideAPIInfo, SlideSection } from "../types/slideTypes";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons'
-import OptionsView from './optionsView';
+// import OptionsView from './optionsView';
 import ListGroup from 'react-bootstrap/ListGroup'
 import Accordion from 'react-bootstrap/Accordion'
 import Slide from './slide';
@@ -80,7 +80,7 @@ function SlideViewer(props: IProps) {
                             points={slideState.sectionPoints[title][subtitle]}
                             select={currentTitle === title && currentSubTitle === subtitle}
                             handleClick={() => {
-                                if(currentTitle === title) {
+                                if (currentTitle === title) {
                                     if (currentSubTitle === subtitle)
                                         return
                                     setCurrentSubTitle(subtitle)
@@ -103,14 +103,19 @@ function SlideViewer(props: IProps) {
     return (
         <>
             <div id='main-body'>
-                <OptionsView></OptionsView>
+                {/* <OptionsView></OptionsView> */}
                 <div id='main-panel'>
                     <div id='explore-view'>
                         <div id='vis-panel'>
                             <NotebookVisView cells={props.cells} />
                         </div>
-                        <div id='hierarchy-panel'>
-                            {slideHierarchy}
+                        <div id='ref-panel'>
+                            <div id='hierarchy-panel'>
+                                {slideHierarchy}
+                            </div>
+                            <div id='prompt-panel'>
+
+                            </div>
                         </div>
                     </div>
                     <div id={"slideview"}>

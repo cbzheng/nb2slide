@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../style/slideview.css'
 import { StaticNotebookCell } from '../notebookUtils';
-import * as d3 from 'd3'
+import * as d3 from 'd3';
 
 interface IProps {
     cells: Array<StaticNotebookCell>
@@ -9,6 +9,7 @@ interface IProps {
 
 function NotebookVisView(props: IProps) {
     const [notebookData, setNotebookData] = useState([])
+    const [notebookVis, setNotebookVis] = useState(<></>)
 
     useEffect(() => {
         setNotebookData(props.cells.map(cell => {
@@ -24,26 +25,45 @@ function NotebookVisView(props: IProps) {
         }))
     }, [props.cells])
 
-    useEffect(()=> {
-        d3.selectAll("svg > *").remove()
-        const svg = d3.select('#d3-panel')
-        const {height, width} = (svg.node() as HTMLElement).getBoundingClientRect()
-        const paddingLeft = "1rem"
-        console.log(width, height)
-        const codeLinesNum = notebookData.reduce((acc, cur) => { acc + cur.length}, 0)
-        console.log(codeLinesNum)
-        const lineHeight = height/codeLinesNum
-        console.log(lineHeight)
+    useEffect(() => {
+        const panel = d3.select('#nb-vis-view')
+        const { height } = (panel.node() as HTMLElement).getBoundingClientRect()
+        const minCellHeight = 2;
+        const cellInterval = 2
+        console.log(height)
 
+        // use pow(0.5) for better overview(assumption)
+        const codeLinesNum = notebookData.reduce((acc, cur) => acc + Math.pow(cur.length, 0.5), 0)
+        const codeCellsHeightsSum = height - notebookData.length * (cellInterval +  minCellHeight)
+        const codeCellHeightScaler = codeCellsHeightsSum / codeLinesNum
+        const computeCellHeight: Function = (cellLen: any) => minCellHeight + Math.pow(cellLen, 0.5) * codeCellHeightScaler
 
-        svg.append('g')
-        .attr('x', paddingLeft)
+        //@ts-ignore
+        setNotebookVis(notebookData.map((cellData, idx) => {
+            let isAdjSameType = false
+            if (idx > 0 && notebookData[idx-1].code_type === notebookData[idx].code_type) {
+                isAdjSameType = true
+            }
+            return (
+                <div
+                    className='nb-cell-rect'
+                    style={{
+                        height: computeCellHeight(cellData.length).toString() + 'px',
+                        marginTop: isAdjSameType? '0px': cellInterval.toString() + 'px',
+                        width: '80%',
+                        backgroundColor: cellData.code_type === 'markdown'? '#ddd': '#ccc'
+                    }}
+                >
+                </div>
+            )
+        }))
+
     }, [notebookData])
 
     return (
         <>
             <div id={"nb-vis-view"}>
-                <svg id='d3-panel' />
+                {notebookVis}
             </div>
         </>
     )

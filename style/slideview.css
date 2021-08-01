@@ -146,7 +146,18 @@
 .slide-point-list {
 }
 
-#d3-panel {
+#nb-vis-view {
   width: 100%;
-  height: 85vh;
+  height: 90vh;
+  margin-left: 10%;
+  margin-top: 1rem;
+  margin-right: 10%;
+}
+
+.nb-cell-rect:hover {
+  border: 3px solid lightskyblue;
+}
+
+.nb-select-cell-rect {
+  border: 3px solid royalblue;
 }
