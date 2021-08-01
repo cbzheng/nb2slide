@@ -4,7 +4,7 @@ import '../../style/slideview.css'
 import { slideReducerInitialState } from '../reducer/slidesReducer';
 import { SlideAPIInfo, SlideSection } from "../types/slideTypes";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/free-solid-svg-icons'
 // import OptionsView from './optionsView';
 import ListGroup from 'react-bootstrap/ListGroup'
 import Accordion from 'react-bootstrap/Accordion'
@@ -138,6 +138,7 @@ function SlideViewer(props: IProps) {
                                     <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faEdit} size="2x" />
                                     <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
                                     <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
+                                    <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faFileExport} size="2x" />
                                 </div>
                             </div>
                         </div>

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import '../../style/slideview.css'
+import {InputGroup, FormControl, Button} from 'react-bootstrap'
 
 interface IProps {
     title: string,
@@ -10,9 +11,41 @@ interface IProps {
 }
 
 function Slide(props: IProps) {
-    const pointsList = props.points.map(point => {
-        return (<li className='slide-point'>{point}</li>)
-    })
+    const [pointsList, setPointsList] = useState([<></>])
+    const [selectedPoint, setSelectedPoint] = useState(-1)
+
+    useEffect(() => {
+        setPointsList(props.points.map((point, i) => {
+            if (selectedPoint === i) {
+                return (
+                    <InputGroup className="mb-3">
+                    <FormControl
+                        // placeholder={point}
+                        value={point}
+                        aria-label="Recipient's username"
+                        aria-describedby="basic-addon2"
+                    />
+                    <Button variant="outline-secondary" id="button-addon2">
+                        Ok
+                    </Button>
+                    <Button variant="outline-secondary" id="button-addon2">
+                        Cancel
+                    </Button>
+                </InputGroup>
+                )
+            }
+
+            return (
+                <li className='slide-point' onDoubleClick={() => {
+                    console.log('double click')
+                    setSelectedPoint(i)
+                }}>
+                    {point}
+                </li>
+            )
+        }))
+    }, [props.points, selectedPoint])
+    
 
     return (
         <>
