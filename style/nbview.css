@@ -40,6 +40,9 @@
 
 #vis-panel {
     width: 30%;
+    height: 90vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #ref-panel {

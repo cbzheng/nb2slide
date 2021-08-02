@@ -16,7 +16,8 @@ import ExampleView from './exampleView';
 interface IProps {
     slides: SlideAPIInfo,
     cells: Array<StaticNotebookCell>,
-    navNBCb: Function
+    navNBCb: Function,
+    getNBCell: Function
 }
 
 function SlideViewer(props: IProps) {
@@ -25,6 +26,7 @@ function SlideViewer(props: IProps) {
     const [slideDeck, setSlideDeck] = useState(<></>)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
+    const [linkingViewMode, setLinkingViewMode] = useState('simple')
     const hierarchyTitleRefs = useRef([])
 
     useEffect(() => {
@@ -116,9 +118,11 @@ function SlideViewer(props: IProps) {
                             <NotebookVisView
                                 cells={props.cells}
                                 navNBCb={props.navNBCb}
+                                getNBCell={props.getNBCell}
                                 slidesMapToCells={slideState.sectionCodeCells}
                                 selectedTitle={currentTitle}
                                 selectedSubTitle={currentSubTitle}
+                                mode={linkingViewMode}
                             />
                         </div>
                         <div id='ref-panel'>
@@ -126,7 +130,11 @@ function SlideViewer(props: IProps) {
                                 {slideHierarchy}
                             </div>
                             <div id='prompt-panel'>
-                                <ExampleView currentSubTitle={currentSubTitle} currentTitle={currentTitle} />
+                                <ExampleView 
+                                currentSubTitle={currentSubTitle} 
+                                currentTitle={currentTitle}
+                                changeLingkingMode={(mode: string) => {setLinkingViewMode(mode)}}
+                                 />
                             </div>
                         </div>
                     </div>

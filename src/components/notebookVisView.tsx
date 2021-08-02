@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/slideview.css'
-import { StaticNotebookCell } from '../notebookUtils';
+import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import * as d3 from 'd3';
 import { SlideCellRelation } from '../types/slideTypes';
 
 interface IProps {
     cells: Array<StaticNotebookCell>,
     navNBCb: Function,
+    getNBCell: Function
     slidesMapToCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
     selectedTitle: string,
-    selectedSubTitle: string
+    selectedSubTitle: string,
+    mode: string
 }
 
 function NotebookVisView(props: IProps) {
@@ -67,7 +69,7 @@ function NotebookVisView(props: IProps) {
         let distExtend: Array<number> = d3.extent(Object.entries(currentRelatedCells).map(entry => {
             return entry[1].dist
         }))
-        
+
         let orange = d3.scaleOrdinal(d3.schemeOranges[3])
             // @ts-ignore
             .domain([distExtend[1], distExtend[0]])
@@ -80,7 +82,7 @@ function NotebookVisView(props: IProps) {
             }
 
             // set colors for related cells
-            let color =cellData.code_type === 'markdown' ? '#ccc' : '#eee'
+            let color = cellData.code_type === 'markdown' ? '#ccc' : '#eee'
             let exHeight = 0
             let exWidth = 0
             if (cellData.index in currentRelatedCells) {
@@ -90,27 +92,50 @@ function NotebookVisView(props: IProps) {
                 exWidth = 30
             }
 
+            let cellOutput = null
+            if (props.mode === 'detail') {
+                cellOutput = getOutputAreaElements(props.getNBCell(cellData.index).node).output_arr[0].item(0)
+                if (cellOutput !== null) {
+                    cellOutput = cellOutput.getElementsByTagName('img');
+                    console.log(cellOutput)
+                    if (cellOutput) cellOutput = cellOutput[0]
+                    // @ts-ignore
+                    if (cellOutput) cellOutput = cellOutput.cloneNode(true)
+                }
+            }
+
             return (
-                <div
-                    className='nb-cell-rect'
-                    style={{
-                        height: (computeCellHeight(cellData.length) + exHeight).toString() + 'px',
-                        marginTop: isAdjSameType ? '0px' : cellInterval.toString() + 'px',
-                        width: (50 + exWidth).toString() + '%',
-                        backgroundColor: color,
-                        transitionDuration: '0.3s',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => {
-                        console.log('on click')
-                        props.navNBCb(cellData.index)
-                    }}
-                >
+                <div>
+                    <div
+                        className='nb-cell-rect'
+                        style={{
+                            height: (computeCellHeight(cellData.length) + exHeight).toString() + 'px',
+                            marginTop: isAdjSameType ? '0px' : cellInterval.toString() + 'px',
+                            width: (50 + exWidth).toString() + '%',
+                            backgroundColor: color,
+                            transitionDuration: '0.3s',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                            console.log('on click')
+                            props.navNBCb(cellData.index)
+                        }}
+                    >
+                    </div>
+                    {
+                        props.mode === 'detail' && cellOutput !== null && cellOutput !== undefined &&
+
+                        <img src={
+                            cellOutput.currentSrc
+                        } style={{width: '100%'}}></img>
+//  {/* <div dangerouslySetInnerHTML={{__html: (cellOutput as HTMLElement).innerHTML}} /> */}
+
+                    }
                 </div>
             )
         }))
 
-    }, [notebookData, currentRelatedCells])
+    }, [notebookData, currentRelatedCells, props.mode])
 
     return (
         <>

@@ -6,6 +6,7 @@ import '../../style/slideview.css'
 interface IProps {
     currentTitle: string
     currentSubTitle: string
+    changeLingkingMode: Function
 }
 
 function ExampleView(props: IProps) {
@@ -35,13 +36,31 @@ function ExampleView(props: IProps) {
                                 <option>Low</option>
                             </FormSelect>
                         </div>
+                        <div style={{
+                            paddingBottom: '1rem'
+                        }}>
+                            Max Points Number(per Slides)
+                            <FormSelect>
+                                <option>5</option>
+                                <option>3</option>
+                            </FormSelect>
+                        </div>
                         <Button variant='success'>Regenerate</Button>
                     </div>
                 </Tab>
                 <Tab eventKey='examples' title='Examples'>
 
                 </Tab>
-
+                <Tab eventKey='mode' title='Mode'>
+                    <div style={{
+                        padding: '1rem'
+                    }}>
+                        <h5>Linking View</h5>
+                        <Button variant='success' onClick={() => props.changeLingkingMode('simple')}>Simple</Button>
+                        <br></br>
+                        <Button variant='success' onClick={() => props.changeLingkingMode('detail')}>Details</Button>
+                    </div>
+                </Tab>
             </Tabs>
         </>
 

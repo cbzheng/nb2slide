@@ -74,7 +74,12 @@ export class NB2Slide {
                     this.cellsIndex[cellIdx].node.scrollIntoView();
                 }
 
+                const getNBCell = (cellIdx: number) => {
+                    return this.cellsIndex[cellIdx]
+                }
+
                 this.widgetContent.setNavNBCb(navNBCallback)
+                this.widgetContent.setGetNBCell(getNBCell)
 
                 // Update the React widget
                 this.widgetContent.update()
