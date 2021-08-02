@@ -56,7 +56,7 @@ function NotebookVisView(props: IProps) {
     useEffect(() => {
         const panel = d3.select('#nb-vis-view')
         const { height } = (panel.node() as HTMLElement).getBoundingClientRect()
-        const minCellHeight = 2;
+        const minCellHeight = 3;
         const cellInterval = 2
         console.log(height)
 
@@ -64,7 +64,11 @@ function NotebookVisView(props: IProps) {
         const codeLinesNum = notebookData.reduce((acc, cur) => acc + Math.pow(cur.length, 0.5), 0)
         const codeCellsHeightsSum = height - notebookData.length * (cellInterval + minCellHeight)
         const codeCellHeightScaler = codeCellsHeightsSum / codeLinesNum
-        const computeCellHeight: Function = (cellLen: any) => minCellHeight + Math.pow(cellLen, 0.5) * codeCellHeightScaler
+        let computeCellHeight: Function = (cellLen: any) => minCellHeight + Math.pow(cellLen, 0.5) * codeCellHeightScaler
+
+        if (props.mode === 'detail') {
+            computeCellHeight = (cellLen: any) => minCellHeight * cellLen
+        }
 
         let distExtend: Array<number> = d3.extent(Object.entries(currentRelatedCells).map(entry => {
             return entry[1].dist
@@ -94,6 +98,7 @@ function NotebookVisView(props: IProps) {
 
             let cellOutput = null
             if (props.mode === 'detail') {
+                exWidth = 30
                 cellOutput = getOutputAreaElements(props.getNBCell(cellData.index).node).output_arr[0].item(0)
                 if (cellOutput !== null) {
                     cellOutput = cellOutput.getElementsByTagName('img');
@@ -127,7 +132,7 @@ function NotebookVisView(props: IProps) {
 
                         <img src={
                             cellOutput.currentSrc
-                        } style={{width: '100%'}}></img>
+                        } style={{width: '80%', marginTop: '3px', marginBottom: '3px'}}></img>
 //  {/* <div dangerouslySetInnerHTML={{__html: (cellOutput as HTMLElement).innerHTML}} /> */}
 
                     }

@@ -56,8 +56,8 @@ function ExampleView(props: IProps) {
                         padding: '1rem'
                     }}>
                         <h5>Linking View</h5>
-                        <Button variant='success' onClick={() => props.changeLingkingMode('simple')}>Simple</Button>
-                        <br></br>
+                        <Button variant='success' onClick={() => props.changeLingkingMode('simple')} style={{marginRight: '1rem'}}>Simple</Button>
+
                         <Button variant='success' onClick={() => props.changeLingkingMode('detail')}>Details</Button>
                     </div>
                 </Tab>
