@@ -6,7 +6,6 @@ import '../../style/slideview.css'
 interface IProps {
     currentTitle: string
     currentSubTitle: string
-    changeLingkingMode: Function
 }
 
 function ExampleView(props: IProps) {
@@ -50,16 +49,6 @@ function ExampleView(props: IProps) {
                 </Tab>
                 <Tab eventKey='examples' title='Examples'>
 
-                </Tab>
-                <Tab eventKey='mode' title='Mode'>
-                    <div style={{
-                        padding: '1rem'
-                    }}>
-                        <h5>Linking View</h5>
-                        <Button variant='success' onClick={() => props.changeLingkingMode('simple')} style={{marginRight: '1rem'}}>Simple</Button>
-
-                        <Button variant='success' onClick={() => props.changeLingkingMode('detail')}>Details</Button>
-                    </div>
                 </Tab>
             </Tabs>
         </>

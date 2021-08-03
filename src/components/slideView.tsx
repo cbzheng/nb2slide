@@ -26,7 +26,6 @@ function SlideViewer(props: IProps) {
     const [slideDeck, setSlideDeck] = useState(<></>)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
-    const [linkingViewMode, setLinkingViewMode] = useState('simple')
     const hierarchyTitleRefs = useRef([])
 
     useEffect(() => {
@@ -122,7 +121,6 @@ function SlideViewer(props: IProps) {
                                 slidesMapToCells={slideState.sectionCodeCells}
                                 selectedTitle={currentTitle}
                                 selectedSubTitle={currentSubTitle}
-                                mode={linkingViewMode}
                             />
                         </div>
                         <div id='ref-panel'>
@@ -133,7 +131,6 @@ function SlideViewer(props: IProps) {
                                 <ExampleView 
                                 currentSubTitle={currentSubTitle} 
                                 currentTitle={currentTitle}
-                                changeLingkingMode={(mode: string) => {setLinkingViewMode(mode)}}
                                  />
                             </div>
                         </div>

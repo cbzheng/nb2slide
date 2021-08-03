@@ -48,6 +48,18 @@
     cursor:pointer
 }
 
+.linking-icon {
+  width: 20px;
+  height: 20px;
+  margin: 3px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+:hover.linking-icon {
+  color: skyblue;
+}
+
 .edit-icon-list {
     display: flex;
     position: sticky;
@@ -146,18 +158,28 @@
 .slide-point-list {
 }
 
+#nb-vis-panel {
+  width: 100%;
+  height: 4vh;
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 0.5vh;
+  padding-left: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
 #nb-vis-view {
   width: 100%;
-  height: 90vh;
+  height: 86vh;
   margin-left: 10%;
   margin-top: 1rem;
   margin-right: 10%;
 }
 
 .nb-cell-rect:hover {
-  border: 4px solid lightskyblue;
+  border: 2px solid lightskyblue;
 }
 
 .nb-select-cell-rect {
-  border: 3px solid royalblue;
+  border: 2px solid royalblue;
 }

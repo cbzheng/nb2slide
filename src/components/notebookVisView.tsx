@@ -3,6 +3,8 @@ import '../../style/slideview.css'
 import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import * as d3 from 'd3';
 import { SlideCellRelation } from '../types/slideTypes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPoll, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 
 interface IProps {
     cells: Array<StaticNotebookCell>,
@@ -10,18 +12,19 @@ interface IProps {
     getNBCell: Function
     slidesMapToCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
     selectedTitle: string,
-    selectedSubTitle: string,
-    mode: string
+    selectedSubTitle: string
 }
 
 function NotebookVisView(props: IProps) {
+    const [isShowOutputs, setIsShowOutputs] = useState(false)
+    const [followCellLength, setFollowCellLength] = useState(false)
     const [notebookData, setNotebookData] = useState([])
     const [notebookVis, setNotebookVis] = useState(<></>)
     const [currentRelatedCells, setCurrentRelatedCells] = useState({} as { [cell_idx: number]: SlideCellRelation })
+    const [codeLineExtent, setCodeLineExtent] = useState([Infinity, -Infinity])
 
     // prepare related cells data
     useEffect(() => {
-        console.log('set cells')
         if (props.selectedTitle.length > 0 && props.selectedSubTitle.length > 0) {
             // extract related code cells
             const cells = props.slidesMapToCells[props.selectedTitle][props.selectedSubTitle]
@@ -50,23 +53,37 @@ function NotebookVisView(props: IProps) {
                 lines: codeLineLength
             }
         }))
+
+        let minLen = Infinity
+        let maxLen = -Infinity
+        props.cells.forEach(cell => {
+            const lines = cell.source.split('\n').filter(l => l.length > 1)
+            lines.forEach(l => {
+                if (l.length > maxLen) {
+                    maxLen = l.length
+                }
+                if (l.length < minLen) {
+                    minLen = l.length
+                }
+            })
+        })
+        setCodeLineExtent([minLen, maxLen])
     }, [props.cells])
 
     // compute the vis
     useEffect(() => {
         const panel = d3.select('#nb-vis-view')
-        const { height } = (panel.node() as HTMLElement).getBoundingClientRect()
+        const { height, width } = (panel.node() as HTMLElement).getBoundingClientRect()
+        const minCodeLineLength = 15
+        const codeLineMargin = 5
         const minCellHeight = 3;
-        const cellInterval = 2
-        console.log(height)
+        const cellInterval = 2;
 
         // use pow(0.5) for better overview(assumption)
-        const codeLinesNum = notebookData.reduce((acc, cur) => acc + Math.pow(cur.length, 0.5), 0)
         const codeCellsHeightsSum = height - notebookData.length * (cellInterval + minCellHeight)
-        const codeCellHeightScaler = codeCellsHeightsSum / codeLinesNum
-        let computeCellHeight: Function = (cellLen: any) => minCellHeight + Math.pow(cellLen, 0.5) * codeCellHeightScaler
+        let computeCellHeight: Function = (cellLen: any) => minCellHeight + codeCellsHeightsSum / notebookData.length
 
-        if (props.mode === 'detail') {
+        if (followCellLength) {
             computeCellHeight = (cellLen: any) => minCellHeight * cellLen
         }
 
@@ -78,6 +95,14 @@ function NotebookVisView(props: IProps) {
             // @ts-ignore
             .domain([distExtend[1], distExtend[0]])
 
+        let codeLineScale = d3.scaleLinear()
+            .domain(codeLineExtent)
+            .range(
+                width > minCodeLineLength ?
+                    [minCodeLineLength, width - codeLineMargin]
+                    : [minCodeLineLength, 2 * minCodeLineLength]
+            )
+
         //@ts-ignore
         setNotebookVis(notebookData.map((cellData, idx) => {
             let isAdjSameType = false
@@ -88,25 +113,38 @@ function NotebookVisView(props: IProps) {
             // set colors for related cells
             let color = cellData.code_type === 'markdown' ? '#ccc' : '#eee'
             let exHeight = 0
-            let exWidth = 0
             if (cellData.index in currentRelatedCells) {
                 // @ts-ignore
                 color = orange(currentRelatedCells[cellData.index].dist)
                 exHeight = 10
-                exWidth = 30
             }
 
             let cellOutput = null
-            if (props.mode === 'detail') {
-                exWidth = 30
+            if (isShowOutputs) {
                 cellOutput = getOutputAreaElements(props.getNBCell(cellData.index).node).output_arr[0].item(0)
                 if (cellOutput !== null) {
                     cellOutput = cellOutput.getElementsByTagName('img');
-                    console.log(cellOutput)
                     if (cellOutput) cellOutput = cellOutput[0]
                     // @ts-ignore
                     if (cellOutput) cellOutput = cellOutput.cloneNode(true)
                 }
+            }
+
+            let codeDetails = <></>
+            if (followCellLength) {
+                // visualize the code
+                codeDetails = cellData.lines.map((line: Number) => {
+                    return <div 
+                        style={{
+                            width: codeLineScale(line).toString() + 'px',
+                            height: '2px',
+                            borderRadius: '1px',
+                            backgroundColor: 'grey',
+                            marginBottom: '1px',
+                            marginLeft: '3px'
+                        }}
+                    />
+                });
             }
 
             return (
@@ -116,34 +154,69 @@ function NotebookVisView(props: IProps) {
                         style={{
                             height: (computeCellHeight(cellData.length) + exHeight).toString() + 'px',
                             marginTop: isAdjSameType ? '0px' : cellInterval.toString() + 'px',
-                            width: (50 + exWidth).toString() + '%',
+                            width: (80).toString() + '%',
                             backgroundColor: color,
                             transitionDuration: '0.3s',
                             cursor: 'pointer'
                         }}
                         onClick={() => {
-                            console.log('on click')
                             props.navNBCb(cellData.index)
                         }}
                     >
+                        {codeDetails}
                     </div>
                     {
-                        props.mode === 'detail' && cellOutput !== null && cellOutput !== undefined &&
+                        isShowOutputs && cellOutput !== null && cellOutput !== undefined &&
 
-                        <img src={
-                            cellOutput.currentSrc
-                        } style={{width: '80%', marginTop: '3px', marginBottom: '3px'}}></img>
-//  {/* <div dangerouslySetInnerHTML={{__html: (cellOutput as HTMLElement).innerHTML}} /> */}
+                        <img
+                            src={
+                                cellOutput.currentSrc
+                            }
+                            className='nb-cell-rect'
+                            style={{
+                                width: '80%',
+                                marginTop: '3px',
+                                marginBottom: '3px'
+                            }}
+                            onClick={() => {
+                                props.navNBCb(cellData.index)
+                            }}
+                        ></img>
+                        //  {/* <div dangerouslySetInnerHTML={{__html: (cellOutput as HTMLElement).innerHTML}} /> */}
 
                     }
                 </div>
             )
         }))
 
-    }, [notebookData, currentRelatedCells, props.mode])
+    }, [notebookData, currentRelatedCells, isShowOutputs, followCellLength])
 
     return (
         <>
+            <div id={'nb-vis-panel'}>
+                <FontAwesomeIcon
+                    className={"linking-icon icon-output"}
+                    icon={faPoll}
+                    size='2x'
+                    style={{
+                        color: isShowOutputs ? 'royalblue' : 'lightgrey'
+                    }}
+                    onClick={() => {
+                        setIsShowOutputs(!isShowOutputs)
+                    }}
+                />
+                <FontAwesomeIcon
+                    className={"linking-icon icon-output"}
+                    icon={faFileAlt}
+                    size='2x'
+                    style={{
+                        color: followCellLength ? 'royalblue' : 'lightgrey'
+                    }}
+                    onClick={() => {
+                        setFollowCellLength(!followCellLength)
+                    }}
+                />
+            </div>
             <div id={"nb-vis-view"}>
                 {notebookVis}
             </div>
