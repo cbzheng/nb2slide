@@ -11,7 +11,6 @@ import Accordion from 'react-bootstrap/Accordion'
 import Slide from './slide';
 import { StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
-import ExampleView from './exampleView';
 
 interface IProps {
     slides: SlideAPIInfo,
@@ -126,12 +125,6 @@ function SlideViewer(props: IProps) {
                         <div id='ref-panel'>
                             <div id='hierarchy-panel'>
                                 {slideHierarchy}
-                            </div>
-                            <div id='prompt-panel'>
-                                <ExampleView 
-                                currentSubTitle={currentSubTitle} 
-                                currentTitle={currentTitle}
-                                 />
                             </div>
                         </div>
                     </div>

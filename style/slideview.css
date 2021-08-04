@@ -166,6 +166,7 @@
   padding-left: 0.5rem;
   display: flex;
   align-items: center;
+  
 }
 
 #nb-vis-view {
@@ -174,6 +175,31 @@
   margin-left: 10%;
   margin-top: 1rem;
   margin-right: 10%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+/* width */
+#nb-vis-view::-webkit-scrollbar {
+  width: 4px;
+  margin-right: 2px;
+}
+
+/* Track */
+#nb-vis-view::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+/* Handle */
+#nb-vis-view::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 2px;
+}
+
+/* Handle on hover */
+#nb-vis-view::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
 }
 
 .nb-cell-rect:hover {
@@ -182,4 +208,30 @@
 
 .nb-select-cell-rect {
   border: 2px solid royalblue;
+}
+
+.slider-question {
+  display: flex;
+  flex-direction: row;
+}
+
+.slider-label-left {
+  font-weight: bold;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  width: 25%;
+  margin-bottom: 1rem;
+}
+
+.slider-label-right {
+  font-weight: bold;
+  padding-left: 2rem;
+  padding-top: 0.5rem;
+  width: 25%;
+  margin-bottom: 1rem;
+}
+
+.slider-question-lable {
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
 }

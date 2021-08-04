@@ -60,16 +60,16 @@ export class NB2Slide {
         commands.addCommand(this.command, {
             label: 'Generate slides',
             caption: 'Generate slides',
-            execute: async (args: any) => {
+            execute: (args: any) => {
                 //@ts-ignore
                 const cells: Array<Cell> = this.notebookTools.activeNotebookPanel.content.widgets
                 this.notebookPanel = this.notebookTools.activeNotebookPanel
                 this.cellsIndex = computeCurCellsIdx(cells)
-                // upload the notebook to the back-end
-                await this.widgetContent.updateNotebookInfo(bundleStaticNotebookCells(cells))
+                
+                // configure the widget
+                this.widgetContent.setNotebookCells(bundleStaticNotebookCells(cells))
 
-                // ref: https://github.com/jupyterlab/jupyterlab-toc/blob/9951a4d8caa8fe6c42c86836afc9c0ecf5e3d41d/src/generators/notebook/index.ts
-                const navNBCallback = (cellIdx: number) => {
+               const navNBCallback = (cellIdx: number) => {
                     this.notebookPanel.content.activeCellIndex = cellIdx
                     this.cellsIndex[cellIdx].node.scrollIntoView();
                 }

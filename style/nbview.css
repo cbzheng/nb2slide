@@ -41,31 +41,6 @@
 #vis-panel {
     width: 30%;
     height: 90vh;
-    overflow-y: scroll;
-    overflow-x: hidden;
-}
-
-/* width */
-#vis-panel::-webkit-scrollbar {
-    width: 4px;
-    margin-right: 2px;
-}
-
-/* Track */
-#vis-panel::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 2px;
-}
-
-/* Handle */
-#vis-panel::-webkit-scrollbar-thumb {
-    background: #eee;
-    border-radius: 2px;
-}
-
-/* Handle on hover */
-#vis-panel::-webkit-scrollbar-thumb:hover {
-    background: #aaa;
 }
 
 
@@ -90,7 +65,7 @@
 }
 
 #hierarchy-panel {
-    height: 50%;
+    height: 100%;
     overflow-y:scroll;
 }
 
