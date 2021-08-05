@@ -27,7 +27,6 @@
 
 
 #slideview {
-    width: 60%;
     height: 90vh;
     overflow-x: scroll;
     overflow-y: scroll;
@@ -39,34 +38,15 @@
 }
 
 #vis-panel {
-    width: 30%;
     height: 90vh;
 }
 
-
-
-#ref-panel {
-    width: 70%;
+#hierarchy-panel {
+    overflow-y:hidden;
     height: 90vh;
     margin-top: 1rem;
     margin-bottom: 5rem;
     margin-left: 0.5rem;
-    /* border-left: 1px solid #ccc;; */
-}
-
-#prompt-panel {
-    height: 50%;
-    margin-left: 0.5rem;
-    margin-top: 1rem;
-    margin-right: 0.5rem;
-    margin-bottom: 3rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-}
-
-#hierarchy-panel {
-    height: 100%;
-    overflow-y:scroll;
 }
 
 /* width */
@@ -103,7 +83,6 @@
 }
 
 #explore-view {
-    width: 40%;
     display: flex;
     flex-direction: row;
 }

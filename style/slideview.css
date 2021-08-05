@@ -235,3 +235,15 @@
   margin-bottom: 0.5rem;
   margin-top: 1rem;
 }
+
+#collapose-bar {
+  width: 15px;
+  height: 90vh;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+}
+
+#collapose-bar:hover {
+  background-color: skyblue;
+}
