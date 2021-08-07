@@ -55,13 +55,15 @@ function SlideViewer(props: IProps) {
                     console.log('images on this slide', title, ':', imgs);
 
                     // currently consider only the first one
-                    for (let i = 0; i < imgs.length; i++){
+                    for (let i = 0; i < imgs.length; i++) {
                         cellOutput = getOutputAreaElements(props.getNBCell(imgs[i]).node).output_arr[0].item(0)
                         if (cellOutput !== null) {
                             cellOutput = cellOutput.getElementsByTagName('img');
-                            if (cellOutput && cellOutput[0] !== undefined) 
-                            {
-                                cellOutput = cellOutput[0].currentSrc
+                            if (cellOutput) {
+                                if (cellOutput[0] !== undefined) {
+                                    cellOutput = cellOutput[0].currentSrc
+                                    break
+                                }
                             }
                         }
                     }
@@ -73,7 +75,7 @@ function SlideViewer(props: IProps) {
                             subtitle={subtitle}
                             points={slideState.sectionPoints[title][subtitle]}
                             select={currentTitle === title && currentSubTitle === subtitle}
-                            cellOutput={(cellOutput as string|null)}
+                            cellOutput={(cellOutput as string | null)}
                             handleClick={() => {
                                 if (currentTitle === title) {
                                     if (currentSubTitle === subtitle)
@@ -124,40 +126,40 @@ function SlideViewer(props: IProps) {
                         <div
                             id={'hierarchy-panel'}
                             style={{
-                                width: slideOverviewHide? '10%': '70%',
+                                width: slideOverviewHide ? '10%' : '70%',
                                 display: 'flex',
                                 flexDirection: 'row'
                             }}
                         >
-                        <HierarchyView
-                            slideState={slideState}
-                            updateHierarchySignal={updateHierarchySignal}
-                            setHierarchyRef={(el: any, idx: number) => (hierarchyTitleRefs.current[idx] = el)}
-                            slideOverviewHide={slideOverviewHide}
-                            setSlideOverviewHide={setSlideOverviewHide}
-                        ></HierarchyView>
+                            <HierarchyView
+                                slideState={slideState}
+                                updateHierarchySignal={updateHierarchySignal}
+                                setHierarchyRef={(el: any, idx: number) => (hierarchyTitleRefs.current[idx] = el)}
+                                slideOverviewHide={slideOverviewHide}
+                                setSlideOverviewHide={setSlideOverviewHide}
+                            ></HierarchyView>
+                        </div>
                     </div>
-                </div>
-                <div
-                    id={"slideview"}
-                    style={{
-                        width: slideOverviewHide ? '80%' : '60%'
-                    }}
-                >
-                    <div id={"slide-deck"}>
-                        {slideDeck}
-                        <div className={'edit-icon-list'}>
-                            <div id='edit-panel'>
-                                <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faEdit} size="2x" />
-                                <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
-                                <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
-                                <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faFileExport} size="2x" />
+                    <div
+                        id={"slideview"}
+                        style={{
+                            width: slideOverviewHide ? '80%' : '60%'
+                        }}
+                    >
+                        <div id={"slide-deck"}>
+                            {slideDeck}
+                            <div className={'edit-icon-list'}>
+                                <div id='edit-panel'>
+                                    <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faEdit} size="2x" />
+                                    <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
+                                    <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
+                                    <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faFileExport} size="2x" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </>
     )
 }

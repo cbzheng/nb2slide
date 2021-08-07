@@ -19,12 +19,16 @@ function NB2Slide(props: IProps) {
 
     const updateNotebookInfo = async (
         audience: number,
-        detailLevel: number
+        detailLevel: number,
+        problem: string,
+        background: string
     ) => {
         const data = JSON.stringify({ 
             "notebook": props.notebookCells,
             "audience": audience,
-            "detailLevel": detailLevel
+            "detailLevel": detailLevel,
+            "problem": problem,
+            "background": background
          })
     
         // test mock data
