@@ -1,14 +1,21 @@
 
 export const APISlideInfo = {
-    "introduction": {
-        "points": { "background": ["house price"] },
-        "cells": {
-            "background": [
-                [{
-                    "cell_idx": 89,
-                    "dist": 0.1
-                }]
-            ]
+    template: [{ title: "introduction", subtitles: ['background'] }],
+    slides: {
+        "introduction": {
+            "points": { "background": ["house price"] },
+            "cells": {
+                "background": [
+                    [{
+                        "cell_idx": 89,
+                        "dist": 0.1
+                    }]
+                ]
+            },
+            'img': {}
         }
     }
 }
+
+
+export const mock = "{\"slides\":{\"Appendix: Data\":{\"cells\":{\"Data cleaning\":[[{\"cell_idx\":65,\"dist\":0.346541166305542}],[{\"cell_idx\":39,\"dist\":0.34232627352078754}],[{\"cell_idx\":36,\"dist\":0.3000515153010686}],[{\"cell_idx\":14,\"dist\":0.29575471580028534}],[{\"cell_idx\":35,\"dist\":0.2834695676962535}],[{\"cell_idx\":38,\"dist\":0.2650052011013031}],[{\"cell_idx\":33,\"dist\":0.2645198504130046}],[{\"cell_idx\":40,\"dist\":0.2612215479214986}]],\"Exploratory data analysis\":[[{\"cell_idx\":65,\"dist\":0.4282517333825429}],[{\"cell_idx\":90,\"dist\":0.40157021085421246}],[{\"cell_idx\":91,\"dist\":0.3935058613618215}],[{\"cell_idx\":33,\"dist\":0.3677908678849538}],[{\"cell_idx\":70,\"dist\":0.3588896691799164}],[{\"cell_idx\":39,\"dist\":0.3587247431278229}],[{\"cell_idx\":63,\"dist\":0.35400454699993134}],[{\"cell_idx\":52,\"dist\":0.34730176627635956}]]},\"img\":{},\"points\":{\"Data cleaning\":[\"Plots the summaries of the numeric features .\",\"This function fills in missing values in the features dictionary .\",\"Figure out the percentage of missing data by feature .\",\"Plots the summaries of the numeric features .\",\"Compute the percent of missing data in a dataframe .\",\"Summarize the predictors by converting them to strings and then converting them into strings .\",\"Split features and labels into separate features and labels .\",\"Compute the percent of missing data .\"],\"Exploratory data analysis\":[\"Plots the summaries of the numeric features .\",\"Blend models in order to minimize overfitting .\",\"Compute the RMSLE score of the blended model .\",\"Split features and labels into separate features and labels .\",\"Compute error metrics for cross - validation .\",\"This function fills in missing values in the features dictionary .\",\"Summarize training data .\",\"Summarize all features .\"]}},\"Appendix: Model\":{\"cells\":{\"Model Details\":[[{\"cell_idx\":90,\"dist\":0.6385685801506042}],[{\"cell_idx\":99,\"dist\":0.6122437715530396}],[{\"cell_idx\":97,\"dist\":0.6103750268618265}],[{\"cell_idx\":2,\"dist\":0.6082488298416138}],[{\"cell_idx\":91,\"dist\":0.5984703501065572}],[{\"cell_idx\":93,\"dist\":0.5817460616429647}],[{\"cell_idx\":98,\"dist\":0.5515508651733398}],[{\"cell_idx\":96,\"dist\":0.48191896080970764}]]},\"img\":{},\"points\":{\"Model Alternatives\":[\"RandomForestRegressor\",\"GradientBoostingRegressor\",\"AdaBoostRegressor\",\"BaggingRegressor\",\"KernelRidge\",\"Ridge\",\"RidgeCV\",\"ElasticNet\",\"ElasticNetCV\",\"SVR\",\"GridSearchCV\"],\"Model Details\":[\"Blend models in order to minimize overfitting .\",\"Regression summaries .\",\"Append predictions from blended models .\",\"Generate a summarized image of the model .\",\"Compute the RMSLE score of the blended model .\",\"Plot the predictions for each model\",\"Fix outleir predictions .\",\"Read in sample_submission dataframe .\"]}},\"Conclusion\":{\"cells\":{},\"img\":{},\"points\":{\"Ethical & Legal consideration\":[\"TODO\"],\"Limitation & Risks\":[\"TODO\"],\"Suggestions\":[\"TODO\"]}},\"Feature Engineering\":{\"cells\":{\"Feature Engineering Summarization\":[[{\"cell_idx\":52,\"dist\":0.5069608688354492}],[{\"cell_idx\":28,\"dist\":0.46197907626628876}],[{\"cell_idx\":55,\"dist\":0.4586239755153656}],[{\"cell_idx\":54,\"dist\":0.4586239755153656}],[{\"cell_idx\":60,\"dist\":0.4567366987466812}],[{\"cell_idx\":59,\"dist\":0.4567366987466812}],[{\"cell_idx\":58,\"dist\":0.4567366987466812}],[{\"cell_idx\":33,\"dist\":0.45416579643885296}]]},\"img\":{},\"points\":{\"Feature Engineering Summarization\":[\"Summarize all features .\",\"This function transforms the training data to the logarithm of the sum of the log\",\"Summary squares of residuals\",\"Summarize the residuals .\",\"Summary features shape .\",\"Summary for each feature .\",\"Summarize features .\",\"Split features and labels into separate features and labels .\"],\"Feature Engineering: Example\":[\"TODO\"]}},\"Introduction\":{\"cells\":{},\"img\":{},\"points\":{\"Background\":[\"TODO\"],\"Data Source\":[\"TODO\"],\"Problem\":[\"TODO\"],\"Workflow\":[\"TODO\"]}},\"Model Details\":{\"cells\":{},\"img\":{},\"points\":{\"Model Input\":[\"TODO\"],\"Model Output\":[\"TODO\"],\"Optimization\":[\"TODO\"]}},\"Model Performance\":{\"cells\":{},\"img\":{},\"points\":{\"Metrics\":[\"TODO\"],\"Performance\":[\"TODO\"]}}},\"template\":[{\"subtitles\":[\"Background\",\"Problem\",\"Workflow\",\"Data Source\"],\"title\":\"Introduction\"},{\"subtitles\":[\"Feature Engineering Summarization\",\"Feature Engineering: Example\"],\"title\":\"Feature Engineering\"},{\"subtitles\":[\"Model Input\",\"Model Output\",\"Optimization\"],\"title\":\"Model Details\"},{\"subtitles\":[\"Metrics\",\"Performance\"],\"title\":\"Model Performance\"},{\"subtitles\":[\"Suggestions\",\"Ethical & Legal consideration\",\"Limitation & Risks\"],\"title\":\"Conclusion\"},{\"subtitles\":[\"Exploratory data analysis\",\"Data cleaning\"],\"title\":\"Appendix: Data\"},{\"subtitles\":[\"Model Alternatives\",\"Model Details\"],\"title\":\"Appendix: Model\"}]}\n"

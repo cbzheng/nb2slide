@@ -91,9 +91,9 @@ function NotebookVisView(props: IProps) {
             return entry[1].dist
         }))
 
-        let orange = d3.scaleOrdinal(d3.schemeOranges[3])
+        let blue = d3.scaleOrdinal(d3.schemeBlues[3])
             // @ts-ignore
-            .domain([distExtend[1], distExtend[0]])
+            .domain([distExtend[0], distExtend[1]])
 
         let codeLineScale = d3.scaleLinear()
             .domain(codeLineExtent)
@@ -115,7 +115,7 @@ function NotebookVisView(props: IProps) {
             let exHeight = 0
             if (cellData.index in currentRelatedCells) {
                 // @ts-ignore
-                color = orange(currentRelatedCells[cellData.index].dist)
+                color = blue(currentRelatedCells[cellData.index].dist)
                 exHeight = 10
             }
 

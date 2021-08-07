@@ -32,12 +32,13 @@ function SlideViewer(props: IProps) {
         // slideInfoDispatch({ type: "updateSlides", payload: props.slides })
         let state = slideReducerInitialState
         state.sectionTitles = []
+        state.templateSectionTitles = props.slides.template
         state.templateSectionTitles.forEach((section: SlideSection) => {
-            if (section.title in props.slides) {
+            if (section.title in props.slides.slides) {
                 state.sectionSubtitles[section.title] = section.subtitles
                 state.sectionTitles.push(section.title)
-                state.sectionPoints[section.title] = props.slides[section.title].points
-                state.sectionCodeCells[section.title] = props.slides[section.title].cells
+                state.sectionPoints[section.title] = props.slides.slides[section.title].points
+                state.sectionCodeCells[section.title] = props.slides.slides[section.title].cells
             }
         })
 

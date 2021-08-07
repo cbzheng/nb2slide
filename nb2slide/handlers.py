@@ -22,7 +22,7 @@ class RouteHandler(APIHandler):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
         print('received frontend data')
-        slides = generateSlides(input_data['notebook']).text
+        slides = generateSlides(input_data).text
         self.finish(json.dumps(slides))
 
 
@@ -35,7 +35,7 @@ def setup_handlers(web_app):
     web_app.add_handlers(host_pattern, handlers)
 
 
-def generateSlides(notebook):
+def generateSlides(input_data):
     # These two lines enable debugging at httplib level (requests->urllib3->http.client)
     # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
     # The only thing missing will be the response.body which is not logged.
@@ -50,6 +50,6 @@ def generateSlides(notebook):
     # requests_log.propagate = True
 
     url = "http://0.0.0.0:8080/nbupload"
-    data = {'notebook': notebook}
+    data = input_data
     x = requests.post(url, json=data)
     return x

@@ -26,11 +26,12 @@ function slideReducer(state: SlideReducerState, action: SlideReducerAction): Sli
 function updateSlides(state: SlideReducerState, payload: SlideAPIInfo) {
     console.log("Update slides")
     state.sectionTitles = []
+    state.templateSectionTitles = payload.template
     state.templateSectionTitles.forEach((section: SlideSection) => {
         if (section.title in payload) {
             state.sectionTitles.push(section.title)
-            const points = payload[section.title].points
-            const cells = payload[section.title].cells
+            const points = payload.slides[section.title].points
+            const cells = payload.slides[section.title].cells
             // @ts-ignore
             state.sectionPoints[title] = points
             // @ts-ignore
