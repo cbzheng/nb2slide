@@ -8,7 +8,7 @@ import { faEdit, faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/
 // import OptionsView from './optionsView';
 
 import Slide from './slide';
-import { StaticNotebookCell } from '../notebookUtils';
+import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
 import HierarchyView from './hierarchyView';
 
@@ -39,6 +39,7 @@ function SlideViewer(props: IProps) {
                 state.sectionTitles.push(section.title)
                 state.sectionPoints[section.title] = props.slides.slides[section.title].points
                 state.sectionCodeCells[section.title] = props.slides.slides[section.title].cells
+                state.sectionImages[section.title] = props.slides.slides[section.title].img
             }
         })
 
@@ -48,6 +49,23 @@ function SlideViewer(props: IProps) {
         //@ts-ignore
         setSlideDeck(slideState.sectionTitles.map((title, tIdx) => {
             return slideState.sectionSubtitles[title].map((subtitle, idx) => {
+                const imgs = slideState.sectionImages[title][subtitle]
+                let cellOutput = null
+                if (imgs) {
+                    console.log('images on this slide', title, ':', imgs);
+
+                    // currently consider only the first one
+                    for (let i = 0; i < imgs.length; i++){
+                        cellOutput = getOutputAreaElements(props.getNBCell(imgs[i]).node).output_arr[0].item(0)
+                        if (cellOutput !== null) {
+                            cellOutput = cellOutput.getElementsByTagName('img');
+                            if (cellOutput && cellOutput[0] !== undefined) 
+                            {
+                                cellOutput = cellOutput[0].currentSrc
+                            }
+                        }
+                    }
+                }
                 return (
                     <div id={idx === 0 ? 'section-' + title : ''}>
                         <Slide
@@ -55,6 +73,7 @@ function SlideViewer(props: IProps) {
                             subtitle={subtitle}
                             points={slideState.sectionPoints[title][subtitle]}
                             select={currentTitle === title && currentSubTitle === subtitle}
+                            cellOutput={(cellOutput as string|null)}
                             handleClick={() => {
                                 if (currentTitle === title) {
                                     if (currentSubTitle === subtitle)

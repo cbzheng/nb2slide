@@ -22,7 +22,6 @@ function HierarchyView(props: IProps) {
     const [isCollapose, setIsCollapose] = useState(true)
 
     useEffect(() => {
-        console.log('cao')
         if (props.slideState === undefined || props.slideState === null) {
             return
         }

@@ -23,6 +23,7 @@ export type SlideReducerState = {
     }
     sectionPoints: { [title: string]: { [subtitle: string]: Array<string> } },
     sectionCodeCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
+    sectionImages: { [title: string]: { [subtitle: string]: Array<number> } }
 }
 
 export type SlideReducerAction =

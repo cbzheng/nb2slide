@@ -2,16 +2,21 @@ import { Cell } from '@jupyterlab/cells';
 
 export type StaticNotebookCell = {
     index: number,
-    outputElements: Object,
+    img: boolean,
     source: string,
     cell_type: string
 }
 
 export const bundleStaticNotebookCells = (cellWidgets: {[idx: number]: Cell}): Array<StaticNotebookCell> => {
     return Object.entries(cellWidgets).map(([i, widget]) => {
+        let cellOutput = getOutputAreaElements(widget.node).output_arr[0].item(0)
+        let containImg = false
+        if (cellOutput !== null) {
+            if (cellOutput.getElementsByTagName('img')) containImg = true
+        }
         return {
             index: parseInt(i),
-            outputElements: getOutputAreaElements(widget.node),
+            img: containImg,
             source: widget.model.value.text,
             cell_type: widget.model.type,
         }
