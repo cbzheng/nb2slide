@@ -44,3 +44,45 @@ export async function requestAPI<T>(
 
   return data;
 }
+
+export async function downloadFromAPI<T>(
+  endPoint = '',
+  init: RequestInit = {}
+) {
+  // Make request to Jupyter API
+  const settings = ServerConnection.makeSettings();
+  const requestUrl = URLExt.join(
+    settings.baseUrl,
+    'nb2slide', // API Namespace
+    endPoint
+  );
+
+  let response: Response;
+  try {
+    response = await ServerConnection.makeRequest(requestUrl, init, settings);
+  } catch (error) {
+    throw new ServerConnection.NetworkError(error);
+  }
+
+  let data: any = await response.blob();
+
+  try {
+    const url = window.URL.createObjectURL(data);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    // the filename you want
+    a.download = 'generated.pptx';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    alert('your slides has downloaded!');
+  } catch {
+    alert('download failed')
+  }
+
+  if (!response.ok) {
+    throw new ServerConnection.ResponseError(response, data.message || data);
+  }
+
+}

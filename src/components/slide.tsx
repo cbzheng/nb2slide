@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/slideview.css'
-import { InputGroup, FormControl, Button } from 'react-bootstrap'
+import { InputGroup, FormControl, Button, Popover, OverlayTrigger } from 'react-bootstrap'
+import { faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface IProps {
     title: string,
@@ -8,7 +10,8 @@ interface IProps {
     points: Array<string>,
     select: boolean,
     handleClick: React.MouseEventHandler<HTMLDivElement>;
-    cellOutput: string | null
+    cellOutput: string | null,
+    exportSlides: Function
 }
 
 function Slide(props: IProps) {
@@ -16,9 +19,23 @@ function Slide(props: IProps) {
     const [selectedPoint, setSelectedPoint] = useState(-1)
     const [layout, setLayout] = useState('row')
 
+    const popoverExport = (
+        <Popover id="popover-export">
+            <Popover.Header as="h3">Export Slides</Popover.Header>
+            <Popover.Body style={{ display: 'flex', flexDirection: 'column' }}>
+                <Button variant="outline-primary" style={{ marginBottom: '0.5rem' }}>
+                    Export Single Slide
+                </Button>
+                <Button variant="outline-primary" onClick={() => { props.exportSlides() }}>
+                    Export Slides
+                </Button>
+            </Popover.Body>
+        </Popover>
+    )
+
     useEffect(() => {
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             // @ts-ignore
             if (this.width / this.height > 1.2)
                 setLayout('column')
@@ -76,10 +93,10 @@ function Slide(props: IProps) {
                             // @ts-ignore
                             flexDirection: layout
                         }}>
-                        <ul 
+                        <ul
                             className='slide-point-list'
                             style={{
-                                width: props.cellOutput && layout=='row'? "50%": "100%"
+                                width: props.cellOutput && layout == 'row' ? "50%" : "100%"
                             }}
                         >
                             {pointsList}
@@ -91,7 +108,7 @@ function Slide(props: IProps) {
                                 }
                                 className='nb-cell-rect'
                                 style={{
-                                    width: layout=='row'? '50%': '60%',
+                                    width: layout == 'row' ? '50%' : '60%',
                                     marginTop: '3px',
                                     marginBottom: '3px'
                                 }}
@@ -100,6 +117,34 @@ function Slide(props: IProps) {
                             // }}
                             ></img>
                         }
+                    </div>
+                    <div className={'edit-icon-list'} onClick={(e) => { e.stopPropagation() }}>
+                        <div id='edit-panel'>
+                            <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
+                            <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
+                            <div
+                            >
+                                <OverlayTrigger
+                                    trigger='click'
+                                    key='export'
+                                    placement='left'
+                                    overlay={popoverExport}
+                                >
+                                    <Button variant="link" style={{ padding: '0' }}>
+                                        <FontAwesomeIcon
+                                            className={"edit-icon icon-edit"}
+                                            icon={faFileExport}
+                                            size="2x"
+                                            onClick={
+                                                () => {
+                                                    console.log('click')
+                                                }
+                                            }
+                                        />
+                                    </Button>
+                                </OverlayTrigger>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

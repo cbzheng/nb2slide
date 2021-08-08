@@ -3,8 +3,7 @@ import '../../style/nbview.css'
 import '../../style/slideview.css'
 import { slideReducerInitialState } from '../reducer/slidesReducer';
 import { SlideAPIInfo, SlideSection } from "../types/slideTypes";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/free-solid-svg-icons'
+import { downloadFromAPI } from "../handler";
 // import OptionsView from './optionsView';
 
 import Slide from './slide';
@@ -27,6 +26,23 @@ function SlideViewer(props: IProps) {
     const [currentSubTitle, setCurrentSubTitle] = useState("")
     const [slideOverviewHide, setSlideOverviewHide] = useState(true)
     const hierarchyTitleRefs = useRef([])
+
+    const exportSlides = async () => {
+        const data = JSON.stringify({ 
+            "slides": {
+                'titles': slideState.templateSectionTitles,
+                'points': slideState.sectionPoints,
+            }
+         })
+    
+        await downloadFromAPI<any>('export_slides', {
+            body: data,
+            method: "POST",
+            headers: {
+                "X-Download":"yes",
+            }
+        })
+    }
 
     useEffect(() => {
         // slideInfoDispatch({ type: "updateSlides", payload: props.slides })
@@ -88,8 +104,9 @@ function SlideViewer(props: IProps) {
                                 hierarchyTitleRefs.current[tIdx].click();
                                 console.log(hierarchyTitleRefs)
                             }}
-
+                            exportSlides={exportSlides}
                         />
+
                     </div>
                 )
             })
@@ -148,14 +165,7 @@ function SlideViewer(props: IProps) {
                     >
                         <div id={"slide-deck"}>
                             {slideDeck}
-                            <div className={'edit-icon-list'}>
-                                <div id='edit-panel'>
-                                    <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faEdit} size="2x" />
-                                    <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
-                                    <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
-                                    <FontAwesomeIcon className={"edit-icon icon-edit"} icon={faFileExport} size="2x" />
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
