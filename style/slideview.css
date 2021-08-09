@@ -6,6 +6,7 @@
     width: 99%;
     padding-top: 75%;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 .sl-current-box {
@@ -246,4 +247,29 @@
 
 #collapose-bar:hover {
   background-color: skyblue;
+}
+
+.slide-index {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  bottom: 2rem;
+}
+
+.example-enter {
+  opacity: 0.01;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.example-leave {
+  opacity: 1;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
 }

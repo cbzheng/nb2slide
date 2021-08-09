@@ -5,13 +5,16 @@ import { faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/free-sol
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface IProps {
+    index: number,
     title: string,
     subtitle: string,
     points: Array<string>,
     select: boolean,
     handleClick: React.MouseEventHandler<HTMLDivElement>;
     cellOutput: string | null,
-    exportSlides: Function
+    exportSlides: Function,
+    removeSlide: Function,
+    addSlide: Function
 }
 
 function Slide(props: IProps) {
@@ -45,35 +48,37 @@ function Slide(props: IProps) {
     }, [props.cellOutput])
 
     useEffect(() => {
-        setPointsList(props.points.map((point, i) => {
-            if (selectedPoint === i) {
-                return (
-                    <InputGroup className="mb-3">
-                        <FormControl
-                            // placeholder={point}
-                            value={point}
-                            aria-label="Recipient's username"
-                            aria-describedby="basic-addon2"
-                        />
-                        <Button variant="outline-secondary" id="button-addon2">
-                            Ok
-                        </Button>
-                        <Button variant="outline-secondary" id="button-addon2">
-                            Cancel
-                        </Button>
-                    </InputGroup>
-                )
-            }
+        if (props.points !== undefined) {
+            setPointsList(props.points.map((point, i) => {
+                if (selectedPoint === i) {
+                    return (
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                // placeholder={point}
+                                value={point}
+                                aria-label="Recipient's username"
+                                aria-describedby="basic-addon2"
+                            />
+                            <Button variant="outline-secondary" id="button-addon2">
+                                Ok
+                            </Button>
+                            <Button variant="outline-secondary" id="button-addon2">
+                                Cancel
+                            </Button>
+                        </InputGroup>
+                    )
+                }
 
-            return (
-                <li className='slide-point' onDoubleClick={() => {
-                    console.log('double click')
-                    setSelectedPoint(i)
-                }}>
-                    {point}
-                </li>
-            )
-        }))
+                return (
+                    <li className='slide-point' onDoubleClick={() => {
+                        console.log('double click')
+                        setSelectedPoint(i)
+                    }}>
+                        {point}
+                    </li>
+                )
+            }))
+        }
     }, [props.points, selectedPoint])
 
 
@@ -118,10 +123,21 @@ function Slide(props: IProps) {
                             ></img>
                         }
                     </div>
+                    <div className='slide-index'>{props.index}</div>
                     <div className={'edit-icon-list'} onClick={(e) => { e.stopPropagation() }}>
                         <div id='edit-panel'>
-                            <FontAwesomeIcon className={"edit-icon icon-add"} icon={faPlusSquare} size="2x" />
-                            <FontAwesomeIcon className={"edit-icon icon-minus"} icon={faMinusSquare} size="2x" />
+                            <FontAwesomeIcon 
+                                className={"edit-icon icon-add"} 
+                                icon={faPlusSquare} 
+                                size="2x" 
+                                onClick={() => props.addSlide(props.title, props.subtitle)}
+                            />
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-minus"}
+                                icon={faMinusSquare}
+                                size="2x"
+                                onClick={() => props.removeSlide(props.title, props.subtitle)}
+                            />
                             <div
                             >
                                 <OverlayTrigger
@@ -135,11 +151,6 @@ function Slide(props: IProps) {
                                             className={"edit-icon icon-edit"}
                                             icon={faFileExport}
                                             size="2x"
-                                            onClick={
-                                                () => {
-                                                    console.log('click')
-                                                }
-                                            }
                                         />
                                     </Button>
                                 </OverlayTrigger>

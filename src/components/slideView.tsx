@@ -10,6 +10,7 @@ import Slide from './slide';
 import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
 import HierarchyView from './hierarchyView';
+// import { TransitionGroup } from 'react-transition-group' 
 
 interface IProps {
     slides: SlideAPIInfo,
@@ -18,49 +19,109 @@ interface IProps {
     getNBCell: Function
 }
 
+type Action = {
+    add: [string, string] | null,
+    remove: [string, string] | null
+}
+
 function SlideViewer(props: IProps) {
     const [slideState, setSlideState] = useState(slideReducerInitialState)
+    // const [slideIndexMap, setSlideIndexMap] = useState({} as {[tidx: string]: {[sidx: string]: number}})
     const [slideDeck, setSlideDeck] = useState(<></>)
     const [updateHierarchySignal, setUpdateHierarchySignal] = useState(0)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
     const [slideOverviewHide, setSlideOverviewHide] = useState(true)
     const hierarchyTitleRefs = useRef([])
+    const [actionStore, setActionStore] = useState([] as Array<Action>)
+    const [slideLoaded, setSlideLoaded] = useState(false)
+
+    const removeSlide = (title: string, subtitle: string) => {
+        // store action for restore
+        const action: Action = {
+            add: null,
+            remove: [title, subtitle]
+        }
+        setActionStore(actionStore => [...actionStore, action])
+        console.log(actionStore)
+
+        let state = { ...slideState }
+        state.templateSectionTitles.forEach((section: SlideSection) => {
+            if (section.title === title) {
+                const index = section.subtitles.indexOf(subtitle)
+                section.subtitles.splice(index, 1)
+            }
+        })
+        setSlideState(state)
+    }
+
+    const addSlide = (title: string, subtitle: string) => {
+        // store action for restore
+        const action: Action = {
+            remove: null,
+            add: [title, subtitle]
+        }
+        setActionStore(actionStore => [...actionStore, action])
+        console.log(actionStore)
+
+        let state = { ...slideState }
+        state.templateSectionTitles.forEach((section: SlideSection) => {
+            if (section.title === title) {
+                const index = section.subtitles.indexOf(subtitle)
+                section.subtitles.splice(index + 1, 0, "subtitle")
+            }
+        })
+        setSlideState(state)
+    }
 
     const exportSlides = async () => {
-        const data = JSON.stringify({ 
+        const data = JSON.stringify({
             "slides": {
                 'titles': slideState.templateSectionTitles,
                 'points': slideState.sectionPoints,
             }
-         })
-    
+        })
+
         await downloadFromAPI<any>('export_slides', {
             body: data,
             method: "POST",
             headers: {
-                "X-Download":"yes",
+                "X-Download": "yes",
             }
         })
     }
 
     useEffect(() => {
+        console.log(slideState.templateSectionTitles)
         // slideInfoDispatch({ type: "updateSlides", payload: props.slides })
         let state = slideReducerInitialState
+        let idxMap = {} as { [tidx: string]: { [sidx: string]: number } }
         state.sectionTitles = []
-        state.templateSectionTitles = props.slides.template
+        if (!slideLoaded) {
+            state.templateSectionTitles = props.slides.template
+            setSlideLoaded(true)
+        } else {
+            state.templateSectionTitles = slideState.templateSectionTitles
+        }
+        let slideIdx = 0;
         state.templateSectionTitles.forEach((section: SlideSection) => {
             if (section.title in props.slides.slides) {
+                idxMap[section.title] = {}
                 state.sectionSubtitles[section.title] = section.subtitles
                 state.sectionTitles.push(section.title)
                 state.sectionPoints[section.title] = props.slides.slides[section.title].points
                 state.sectionCodeCells[section.title] = props.slides.slides[section.title].cells
                 state.sectionImages[section.title] = props.slides.slides[section.title].img
+                section.subtitles.forEach(st => {
+                    idxMap[section.title][st] = slideIdx
+                    slideIdx++
+                })
             }
         })
 
         setSlideState(state)
         setUpdateHierarchySignal(updateHierarchySignal + 1)
+
         // slides
         //@ts-ignore
         setSlideDeck(slideState.sectionTitles.map((title, tIdx) => {
@@ -68,7 +129,6 @@ function SlideViewer(props: IProps) {
                 const imgs = slideState.sectionImages[title][subtitle]
                 let cellOutput = null
                 if (imgs) {
-                    console.log('images on this slide', title, ':', imgs);
 
                     // currently consider only the first one
                     for (let i = 0; i < imgs.length; i++) {
@@ -85,8 +145,10 @@ function SlideViewer(props: IProps) {
                     }
                 }
                 return (
-                    <div id={idx === 0 ? 'section-' + title : ''}>
+                    <div key={idxMap[title][subtitle]} id={idx === 0 ? 'section-' + title : ''}>
+
                         <Slide
+                            index={idxMap[title][subtitle]}
                             title={title}
                             subtitle={subtitle}
                             points={slideState.sectionPoints[title][subtitle]}
@@ -105,14 +167,16 @@ function SlideViewer(props: IProps) {
                                 console.log(hierarchyTitleRefs)
                             }}
                             exportSlides={exportSlides}
+                            removeSlide={removeSlide}
+                            addSlide={addSlide}
                         />
-
                     </div>
                 )
             })
         })
         )
-    }, [props.slides, currentTitle, currentSubTitle])
+        console.log(slideDeck)
+    }, [props.slides, slideState, currentTitle, currentSubTitle])
 
     return (
         <>
@@ -164,8 +228,12 @@ function SlideViewer(props: IProps) {
                         }}
                     >
                         <div id={"slide-deck"}>
-                            {slideDeck}
-
+                            {/* <TransitionGroup
+                                transitionName="example"
+                                transitionEnterTimeout={500}
+                                transitionLeaveTimeout={300}> */}
+                                {slideDeck}
+                            {/* </TransitionGroup> */}
                         </div>
                     </div>
                 </div>
