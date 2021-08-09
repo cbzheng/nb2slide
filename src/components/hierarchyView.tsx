@@ -19,7 +19,7 @@ interface IProps {
 
 function HierarchyView(props: IProps) {
     const [structureItems, setStructureItems] = useState([<></>])
-    const [isCollapose, setIsCollapose] = useState(true)
+    const [isCollapose, setIsCollapose] = useState(false)
 
     useEffect(() => {
         if (props.slideState === undefined || props.slideState === null) {

@@ -31,7 +31,7 @@ function SlideViewer(props: IProps) {
     const [updateHierarchySignal, setUpdateHierarchySignal] = useState(0)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
-    const [slideOverviewHide, setSlideOverviewHide] = useState(true)
+    const [slideOverviewHide, setSlideOverviewHide] = useState(false)
     const hierarchyTitleRefs = useRef([])
     const [actionStore, setActionStore] = useState([] as Array<Action>)
     const [slideLoaded, setSlideLoaded] = useState(false)
@@ -97,6 +97,7 @@ function SlideViewer(props: IProps) {
         let state = slideReducerInitialState
         let idxMap = {} as { [tidx: string]: { [sidx: string]: number } }
         state.sectionTitles = []
+        state.exampleSubsections = []
         if (!slideLoaded) {
             state.templateSectionTitles = props.slides.template
             setSlideLoaded(true)
@@ -107,6 +108,8 @@ function SlideViewer(props: IProps) {
         state.templateSectionTitles.forEach((section: SlideSection) => {
             if (section.title in props.slides.slides) {
                 idxMap[section.title] = {}
+                if (props.slides.slides[section.title].egprompt)
+                    state.exampleSubsections = state.exampleSubsections.concat(props.slides.slides[section.title].egprompt)
                 state.sectionSubtitles[section.title] = section.subtitles
                 state.sectionTitles.push(section.title)
                 state.sectionPoints[section.title] = props.slides.slides[section.title].points
@@ -151,6 +154,7 @@ function SlideViewer(props: IProps) {
                             index={idxMap[title][subtitle]}
                             title={title}
                             subtitle={subtitle}
+                            egprompt={slideState.exampleSubsections.includes(subtitle)}
                             points={slideState.sectionPoints[title][subtitle]}
                             select={currentTitle === title && currentSubTitle === subtitle}
                             cellOutput={(cellOutput as string | null)}

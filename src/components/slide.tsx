@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/slideview.css'
-import { InputGroup, FormControl, Button, Popover, OverlayTrigger } from 'react-bootstrap'
+import { InputGroup, FormControl, Button, Popover, OverlayTrigger, Badge } from 'react-bootstrap'
 import { faPlusSquare, faMinusSquare, faFileExport } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import ExamplePrompt from './examplePrompt';
 
 interface IProps {
     index: number,
@@ -14,7 +15,8 @@ interface IProps {
     cellOutput: string | null,
     exportSlides: Function,
     removeSlide: Function,
-    addSlide: Function
+    addSlide: Function,
+    egprompt: boolean
 }
 
 function Slide(props: IProps) {
@@ -43,11 +45,11 @@ function Slide(props: IProps) {
             if (this.width / this.height > 1.2)
                 setLayout('column')
         }
-        console.log('img')
         img.src = props.cellOutput;
     }, [props.cellOutput])
 
     useEffect(() => {
+        console.log(props.subtitle, props.points)
         if (props.points !== undefined) {
             setPointsList(props.points.map((point, i) => {
                 if (selectedPoint === i) {
@@ -78,6 +80,10 @@ function Slide(props: IProps) {
                     </li>
                 )
             }))
+        } else {
+            setPointsList(
+                [<li></li>]
+            ) 
         }
     }, [props.points, selectedPoint])
 
@@ -91,45 +97,55 @@ function Slide(props: IProps) {
             >
                 <div className={"slide"}>
                     <h3>{props.title}</h3>
-                    <h4>{props.subtitle}</h4>
-                    <div
-                        style={{
-                            display: 'flex',
-                            // @ts-ignore
-                            flexDirection: layout
-                        }}>
-                        <ul
-                            className='slide-point-list'
-                            style={{
-                                width: props.cellOutput && layout == 'row' ? "50%" : "100%"
-                            }}
-                        >
-                            {pointsList}
-                        </ul>
+                    <h5>
+                        {props.subtitle}
                         {
-                            props.cellOutput && <img
-                                src={
-                                    props.cellOutput
-                                }
-                                className='nb-cell-rect'
-                                style={{
-                                    width: layout == 'row' ? '50%' : '60%',
-                                    marginTop: '3px',
-                                    marginBottom: '3px'
-                                }}
-                            // onClick={() => {
-                            //     props.navNBCb(cellData.index)
-                            // }}
-                            ></img>
+                            props.egprompt && 
+                            <Badge bg="danger" style={{marginLeft: '1rem'}}>TODO</Badge>
                         }
-                    </div>
+                    </h5>
+                    {
+                        props.egprompt ?
+                            <ExamplePrompt points={props.points}></ExamplePrompt> :
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    // @ts-ignore
+                                    flexDirection: layout
+                                }}>
+                                <ul
+                                    className='slide-point-list'
+                                    style={{
+                                        width: props.cellOutput && layout == 'row' ? "50%" : "100%"
+                                    }}
+                                >
+                                    {pointsList}
+                                </ul>
+                                {
+                                    props.cellOutput && <img
+                                        src={
+                                            props.cellOutput
+                                        }
+                                        className='nb-cell-rect'
+                                        style={{
+                                            width: layout == 'row' ? '50%' : '60%',
+                                            marginTop: '3px',
+                                            marginBottom: '3px'
+                                        }}
+                                    // onClick={() => {
+                                    //     props.navNBCb(cellData.index)
+                                    // }}
+                                    ></img>
+                                }
+                            </div>
+                    }
                     <div className='slide-index'>{props.index}</div>
                     <div className={'edit-icon-list'} onClick={(e) => { e.stopPropagation() }}>
                         <div id='edit-panel'>
-                            <FontAwesomeIcon 
-                                className={"edit-icon icon-add"} 
-                                icon={faPlusSquare} 
-                                size="2x" 
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-add"}
+                                icon={faPlusSquare}
+                                size="2x"
                                 onClick={() => props.addSlide(props.title, props.subtitle)}
                             />
                             <FontAwesomeIcon

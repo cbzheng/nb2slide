@@ -29,6 +29,9 @@ function NotebookVisView(props: IProps) {
             // extract related code cells
             const cells = props.slidesMapToCells[props.selectedTitle][props.selectedSubTitle]
             if (cells) {
+                if (cells.length > 0) {
+                    props.navNBCb(cells[0][0]['cell_idx'])
+                }
                 const cellArray = {} as { [cell_idx: number]: SlideCellRelation }
                 cells.forEach(cArray => {
                     cellArray[cArray[0]['cell_idx']] = cArray[0]

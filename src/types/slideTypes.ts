@@ -6,7 +6,8 @@ export type SlideAPIInfo = {
         points: { [subtitle: string]: Array<string> },
         cells: { [subtitle: string]: Array<Array<SlideCellRelation>> },
         // images, from which cell output
-        img: { [subtitle: string]: Array<number> }
+        img: { [subtitle: string]: Array<number> },
+        egprompt: Array<string>
     }}
 }
 
@@ -23,7 +24,8 @@ export type SlideReducerState = {
     }
     sectionPoints: { [title: string]: { [subtitle: string]: Array<string> } },
     sectionCodeCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
-    sectionImages: { [title: string]: { [subtitle: string]: Array<number> } }
+    sectionImages: { [title: string]: { [subtitle: string]: Array<number> } },
+    exampleSubsections: Array<string>
 }
 
 export type SlideReducerAction =

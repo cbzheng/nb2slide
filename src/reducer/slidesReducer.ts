@@ -13,7 +13,8 @@ export const slideReducerInitialState: SlideReducerState = {
     sectionTitles: [],
     sectionPoints: {},
     sectionCodeCells: {},
-    sectionImages: {}
+    sectionImages: {},
+    exampleSubsections: []
 }
 
 function slideReducer(state: SlideReducerState, action: SlideReducerAction): SlideReducerState {

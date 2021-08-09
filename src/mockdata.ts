@@ -12,7 +12,8 @@ export const APISlideInfo = {
                     }]
                 ]
             },
-            'img': {}
+            'img': {},
+            'egprompt': ['background']
         }
     }
 }
