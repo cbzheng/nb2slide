@@ -27,8 +27,9 @@ function NotebookVisView(props: IProps) {
     useEffect(() => {
         if (props.selectedTitle.length > 0 && props.selectedSubTitle.length > 0) {
             // extract related code cells
-            const cells = props.slidesMapToCells[props.selectedTitle][props.selectedSubTitle]
-            if (cells) {
+            const cellList = props.slidesMapToCells[props.selectedTitle]
+            if (cellList && cellList[props.selectedSubTitle]) {
+                const cells = cellList[props.selectedSubTitle]
                 if (cells.length > 0) {
                     props.navNBCb(cells[0][0]['cell_idx'])
                 }

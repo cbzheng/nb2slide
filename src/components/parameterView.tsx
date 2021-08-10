@@ -13,12 +13,11 @@ interface IProps {
 function ParameterView(props: IProps) {
     const [audience, setAudience] = useState(0)
     const [detailLevel, setDetailLevel] = useState(0)
-    const [problem, setProblem] = useState('')
-    const [background, setBackground] = useState('')
+    const [title, setTitle] = useState('')
     const [submit, setSubmit] = useState(false)
 
     const generate = () => {
-        props.generateSlides(audience, detailLevel, problem, background).then(() => {
+        props.generateSlides(audience, detailLevel, title).then(() => {
             props.afterGenerate()
         })
         setSubmit(true)
@@ -40,38 +39,6 @@ function ParameterView(props: IProps) {
                         width: '75%'
                     }}
                 >
-                    <Card.Header>User Preset</Card.Header>
-                    <Card.Body
-                        style={{
-                            marginLeft: '1rem',
-                            padding: '1rem',
-                        }}
-                    >
-                        <Row>
-                            <FormLabel column lg={2}>
-                                Problem Definition
-                            </FormLabel>
-                            <Col>
-                                <FormControl type="text" value={problem} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setProblem(e.target.value) }} placeholder="what is the solved problem?" />
-                            </Col>
-                        </Row>
-                        <Row>
-                            <FormLabel column lg={2}>
-                                Background
-                            </FormLabel>
-                            <Col>
-                                <FormControl type="text" value={background} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setBackground(e.target.value) }} placeholder="what is the background of the problem?" />
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                </Card>
-                <Card
-                    style={{
-                        marginTop: '2rem',
-                        marginBottom: '1rem',
-                        width: '75%'
-                    }}
-                >
                     <Card.Header>Parameters</Card.Header>
                     <Card.Body
                         style={{
@@ -79,12 +46,25 @@ function ParameterView(props: IProps) {
                             padding: '1rem',
                         }}
                     >
+                        <Row>
+                            <FormLabel column lg={3}>
+                                Slides Title
+                            </FormLabel>
+                            <Col>
+                                <FormControl
+                                    type="text"
+                                    value={title}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTitle(e.target.value) }}
+                                    placeholder="what is the title of the slides?"
+                                />
+                            </Col>
+                        </Row>
                         <div className='slider-question-lable'>Audience Background</div>
                         <div className='slider-question'>
                             <span className='slider-label-left'>Less Technical</span>
                             <Slider
                                 step={1}
-                                min={0} max={2}
+                                min={0} max={1}
                                 value={audience}
                                 onChange={(v) => {
                                     setAudience(v)

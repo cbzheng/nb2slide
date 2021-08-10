@@ -19,12 +19,15 @@ function ExamplePrompt(props: IProps) {
         <>
             <div className='example-prompt'
                 style={{
-                    color: 'red',
-                    fontWeight: "bold"
+                    color: 'grey',
+                    paddingTop: '1rem',
+                    paddingLeft: '1rem',
+                    border: '2px dashed #bdbdbd',
                 }}
             >
-                <h4>Example: </h4>
+                <h5><b>Example: </b></h5>
                 <ul
+                    style={{fontStyle: 'italic'}}
                     className='slide-point-list'
                 >
                     {pointsList}

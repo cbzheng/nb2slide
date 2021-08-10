@@ -10,13 +10,15 @@ import Slide from './slide';
 import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
 import HierarchyView from './hierarchyView';
+import TitleSlide from './titleSlide';
 // import { TransitionGroup } from 'react-transition-group' 
 
 interface IProps {
     slides: SlideAPIInfo,
     cells: Array<StaticNotebookCell>,
     navNBCb: Function,
-    getNBCell: Function
+    getNBCell: Function,
+    title: string
 }
 
 type Action = {
@@ -179,7 +181,6 @@ function SlideViewer(props: IProps) {
             })
         })
         )
-        console.log(slideDeck)
     }, [props.slides, slideState, currentTitle, currentSubTitle])
 
     return (
@@ -232,12 +233,20 @@ function SlideViewer(props: IProps) {
                         }}
                     >
                         <div id={"slide-deck"}>
-                            {/* <TransitionGroup
-                                transitionName="example"
-                                transitionEnterTimeout={500}
-                                transitionLeaveTimeout={300}> */}
-                                {slideDeck}
-                            {/* </TransitionGroup> */}
+                            <TitleSlide 
+                                title={props.title}
+                                select={currentTitle === 'slides-title'}
+                                handleClick={() => {
+                                    if (currentTitle === 'slides-title') {
+                                        return
+                                    }
+                                    setCurrentTitle('slides-title')
+                                }}
+                                exportSlides={exportSlides}
+                                removeSlide={removeSlide}
+                                addSlide={addSlide}
+                            />
+                            {slideDeck}
                         </div>
                     </div>
                 </div>

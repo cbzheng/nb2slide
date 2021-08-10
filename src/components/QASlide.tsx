@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import '../../style/slideview.css'
-import { InputGroup, FormControl, Button } from 'react-bootstrap'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-
-
+import { InputGroup, FormControl, Button, Popover, OverlayTrigger } from 'react-bootstrap'
+import { faPlusSquare, faMinusSquare, faFileExport, faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ExamplePrompt from './examplePrompt';
-import EditPanel from './slideComponents/editPanel';
 
 interface IProps {
     index: number,
@@ -22,10 +19,24 @@ interface IProps {
     egprompt: boolean
 }
 
-function Slide(props: IProps) {
+function QASlide(props: IProps) {
     const [pointsList, setPointsList] = useState([<></>])
     const [selectedPoint, setSelectedPoint] = useState(-1)
     const [layout, setLayout] = useState('row')
+
+    const popoverExport = (
+        <Popover id="popover-export">
+            <Popover.Header as="h3">Export Slides</Popover.Header>
+            <Popover.Body style={{ display: 'flex', flexDirection: 'column' }}>
+                <Button variant="outline-primary" style={{ marginBottom: '0.5rem' }}>
+                    Export Single Slide
+                </Button>
+                <Button variant="outline-primary" onClick={() => { props.exportSlides() }}>
+                    Export Slides
+                </Button>
+            </Popover.Body>
+        </Popover>
+    )
 
     useEffect(() => {
         const img = new Image();
@@ -89,7 +100,7 @@ function Slide(props: IProps) {
                     <h4>
                         {props.subtitle}
                         <FontAwesomeIcon className={"edit-icon icon-help"}
-                            style={{ marginLeft: '0.5rem', fontSize: '1.2rem' }}
+                            style={{marginLeft: '0.5rem', fontSize:'1.2rem'}}
                             icon={faQuestionCircle}
                             onClick={() => props.addSlide(props.title, props.subtitle)} />
                     </h4>
@@ -129,13 +140,39 @@ function Slide(props: IProps) {
                             </div>
                     }
                     <div className='slide-index'>{props.index + 1}</div>
-                    <EditPanel 
-                        addSlide={props.addSlide}
-                        removeSlide={props.removeSlide}
-                        title={props.title}
-                        subtitle={props.subtitle}
-                        exportSlides={props.exportSlides}
-                    />
+                    <div className={'edit-icon-list'} onClick={(e) => { e.stopPropagation() }}>
+                        <div id='edit-panel'>
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-add"}
+                                icon={faPlusSquare}
+                                size="2x"
+                                onClick={() => props.addSlide(props.title, props.subtitle)}
+                            />
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-minus"}
+                                icon={faMinusSquare}
+                                size="2x"
+                                onClick={() => props.removeSlide(props.title, props.subtitle)}
+                            />
+                            <div
+                            >
+                                <OverlayTrigger
+                                    trigger='click'
+                                    key='export'
+                                    placement='left'
+                                    overlay={popoverExport}
+                                >
+                                    <Button variant="link" style={{ padding: '0' }}>
+                                        <FontAwesomeIcon
+                                            className={"edit-icon icon-edit"}
+                                            icon={faFileExport}
+                                            size="2x"
+                                        />
+                                    </Button>
+                                </OverlayTrigger>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
@@ -143,4 +180,4 @@ function Slide(props: IProps) {
     )
 }
 
-export default Slide;
+export default QASlide;

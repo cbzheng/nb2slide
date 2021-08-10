@@ -15,20 +15,19 @@ interface IProps {
 
 function NB2Slide(props: IProps) {
     const [slides, setSlides] = useState({} as SlideAPIInfo)
+    const [title, setTitle] = useState('')
     const [mode, setMode] = useState('parameter')
 
     const updateNotebookInfo = async (
         audience: number,
         detailLevel: number,
-        problem: string,
-        background: string
+        title: string
     ) => {
+        setTitle(title)
         const data = JSON.stringify({ 
             "notebook": props.notebookCells,
             "audience": audience,
-            "detailLevel": detailLevel,
-            "problem": problem,
-            "background": background
+            "detailLevel": detailLevel
          })
     
         // test mock data
@@ -69,6 +68,7 @@ function NB2Slide(props: IProps) {
                             cells={props.notebookCells}
                             navNBCb={props.navNBCb}
                             getNBCell={props.getNBCell}
+                            title={title}
                         />
                     </div>
             }
