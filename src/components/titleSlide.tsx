@@ -8,7 +8,7 @@ interface IProps {
     removeSlide: Function,
     addSlide: Function,
     handleClick: React.MouseEventHandler<HTMLDivElement>,
-    title: string
+    title: string,
 }
 
 function TitleSlide(props: IProps) {
@@ -42,6 +42,7 @@ function TitleSlide(props: IProps) {
                         title={null}
                         subtitle={null}
                         exportSlides={props.exportSlides}
+                        paste={() => {}}
                     ></EditPanel>
                 </div>
             </div>

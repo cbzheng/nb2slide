@@ -16,7 +16,7 @@ function ExportPopover(props: IProps) {
                     Export Single Slide
                 </Button>
                 <Button variant="outline-primary" onClick={() => { props.exportSlides() }}>
-                    Export Slides
+                    Export All Slides
                 </Button>
             </Popover.Body>
         </Popover>

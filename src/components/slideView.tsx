@@ -18,7 +18,8 @@ interface IProps {
     cells: Array<StaticNotebookCell>,
     navNBCb: Function,
     getNBCell: Function,
-    title: string
+    title: string,
+    clipboard: string
 }
 
 type Action = {
@@ -37,6 +38,10 @@ function SlideViewer(props: IProps) {
     const hierarchyTitleRefs = useRef([])
     const [actionStore, setActionStore] = useState([] as Array<Action>)
     const [slideLoaded, setSlideLoaded] = useState(false)
+
+    const pasteClipboard = () => {
+        return props.clipboard
+    }
 
     const removeSlide = (title: string, subtitle: string) => {
         // store action for restore
@@ -153,6 +158,7 @@ function SlideViewer(props: IProps) {
                     <div key={idxMap[title][subtitle]} id={idx === 0 ? 'section-' + title : ''}>
 
                         <Slide
+                            pasteClipboard={pasteClipboard}
                             index={idxMap[title][subtitle]}
                             title={title}
                             subtitle={subtitle}
@@ -233,7 +239,7 @@ function SlideViewer(props: IProps) {
                         }}
                     >
                         <div id={"slide-deck"}>
-                            <TitleSlide 
+                            <TitleSlide
                                 title={props.title}
                                 select={currentTitle === 'slides-title'}
                                 handleClick={() => {

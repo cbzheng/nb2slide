@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../style/slideview.css'
 import { StaticNotebookCell } from '../notebookUtils';
 import { SlideAPIInfo } from '../types/slideTypes';
@@ -11,6 +11,7 @@ interface IProps {
     notebookCells: Array<StaticNotebookCell>
     navNBCb: Function
     getNBCell: Function
+    clipboard: string
 }
 
 function NB2Slide(props: IProps) {
@@ -52,6 +53,10 @@ function NB2Slide(props: IProps) {
         setMode('slides')
     }
 
+    useEffect(()=>{
+        console.log(props.clipboard)
+    }, [props.clipboard])
+
     return (
         <>
             {
@@ -69,6 +74,7 @@ function NB2Slide(props: IProps) {
                             navNBCb={props.navNBCb}
                             getNBCell={props.getNBCell}
                             title={title}
+                            clipboard={props.clipboard}
                         />
                     </div>
             }

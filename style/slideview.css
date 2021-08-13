@@ -50,8 +50,9 @@
 
 .edit-icon {
     color: #cccccc;
-    margin: 3px;
-    cursor:pointer
+    margin: 1px;
+    cursor:pointer;
+    font-size: 1.5rem;
 }
 
 .linking-icon {
@@ -277,4 +278,13 @@
 .example-leave.example-leave-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
+}
+
+.status-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  right: 2rem;
+  top: 2rem;
+  position: absolute;
 }

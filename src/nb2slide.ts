@@ -1,5 +1,6 @@
 import { JupyterFrontEnd } from "@jupyterlab/application";
 import {
+    INotebookModel,
     INotebookTools,
     INotebookTracker,
     NotebookPanel
@@ -10,8 +11,41 @@ import { SlideViewWidget } from './slideviewWidget';
 import { MainAreaWidget } from '@jupyterlab/apputils';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { Menu } from '@lumino/widgets';
-import { bundleStaticNotebookCells, computeCurCellsIdx } from "./notebookUtils";
+import { bundleStaticNotebookCells, computeCurCellsIdx, getOutputAreaElements } from "./notebookUtils";
 import { Cell } from '@jupyterlab/cells';
+import {
+    DocumentRegistry
+} from '@jupyterlab/docregistry';
+import {
+    ToolbarButton
+} from '@jupyterlab/apputils';
+
+import {
+    IDisposable, DisposableDelegate
+} from '@lumino/disposable';
+
+
+class OutputCatchBtnExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+    onclick: () => void
+
+    constructor(onclick: () => void) {
+        this.onclick = onclick
+    }
+
+    createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
+        let button = new ToolbarButton({
+            className: 'outputCatch',
+            iconClass: 'far fa-object-group',
+            onClick: this.onclick,
+            tooltip: 'Copy Output'
+        });
+
+        panel.toolbar.insertItem(0, 'copyOuput', button);
+        return new DisposableDelegate(() => {
+            button.dispose();
+        });
+    }
+}
 
 export class NB2Slide {
     app: JupyterFrontEnd;
@@ -22,7 +56,7 @@ export class NB2Slide {
     widget: MainAreaWidget;
     command: string;
     notebookPanel: NotebookPanel;
-    cellsIndex: {[idx: number]: Cell}
+    cellsIndex: { [idx: number]: Cell }
 
     constructor(
         app: JupyterFrontEnd,
@@ -56,6 +90,27 @@ export class NB2Slide {
         const { commands } = this.app;
         this.command = 'jlab-examples:command-palette';
 
+        const copyOutputOnClick = () => {
+            if (this.cellsIndex === undefined) {
+                alert('You should start the NB2Slide widget to use this function')
+                return
+            }
+            const cellIdx = this.notebookTools.activeNotebookPanel.content.activeCellIndex
+            let cellOutput = null
+            try {
+                cellOutput = getOutputAreaElements(this.cellsIndex[cellIdx].node).output_arr[0].item(0).getElementsByTagName('img')[0].currentSrc;
+            } 
+            catch(error) {
+                alert('Do not find image type output! Only support image-based output migration now!')
+                return
+            }
+            this.widgetContent.setClipboard(cellOutput)
+            this.widgetContent.update()
+            this.widget.update()
+        }
+
+        this.app.docRegistry.addWidgetExtension('Notebook', new OutputCatchBtnExtension(copyOutputOnClick));
+
         // Add a command
         commands.addCommand(this.command, {
             label: 'Generate slides',
@@ -65,11 +120,11 @@ export class NB2Slide {
                 const cells: Array<Cell> = this.notebookTools.activeNotebookPanel.content.widgets
                 this.notebookPanel = this.notebookTools.activeNotebookPanel
                 this.cellsIndex = computeCurCellsIdx(cells)
-                
+
                 // configure the widget
                 this.widgetContent.setNotebookCells(bundleStaticNotebookCells(cells))
 
-               const navNBCallback = (cellIdx: number) => {
+                const navNBCallback = (cellIdx: number) => {
                     this.notebookPanel.content.activeCellIndex = cellIdx
                     this.cellsIndex[cellIdx].node.scrollIntoView();
                 }
