@@ -12,6 +12,7 @@ import NotebookVisView from './notebookVisView';
 import HierarchyView from './hierarchyView';
 import TitleSlide from './titleSlide';
 import { Toast, ToastContainer } from 'react-bootstrap';
+import QASlide from './QASlide';
 // import { TransitionGroup } from 'react-transition-group' 
 
 interface IProps {
@@ -32,7 +33,7 @@ type Action = {
 function SlideViewer(props: IProps) {
     const [slideState, setSlideState] = useState(slideReducerInitialState)
     // const [slideIndexMap, setSlideIndexMap] = useState({} as {[tidx: string]: {[sidx: string]: number}})
-    const [slideDeck, setSlideDeck] = useState(<></>)
+    const [slideDeck, setSlideDeck] = useState([<></>])
     const [updateHierarchySignal, setUpdateHierarchySignal] = useState(0)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
@@ -138,9 +139,29 @@ function SlideViewer(props: IProps) {
         })
     }
 
+    const getOutputImg = (imgs: number[]): string | null => {
+        try {
+            let cellOutput = null
+            // currently consider only the first one
+            // currently consider only the first one
+            for (let i = 0; i < imgs.length; i++) {
+                const output = getOutputAreaElements(props.getNBCell(imgs[i]).node).output_arr[0].item(0)
+                if (output !== null) {
+                    const img = output.getElementsByTagName('img');
+                    if (img)
+                        if (img[0] !== undefined) {
+                            cellOutput = img[0].currentSrc
+                            break
+                        }
+                }
+            }
+            return cellOutput
+        } catch (error) {
+            return null
+        }
+    }
+
     useEffect(() => {
-        console.log(slideState.templateSectionTitles)
-        // slideInfoDispatch({ type: "updateSlides", payload: props.slides })
         let state = slideReducerInitialState
         let idxMap = {} as { [tidx: string]: { [sidx: string]: number } }
         state.sectionTitles = []
@@ -153,15 +174,15 @@ function SlideViewer(props: IProps) {
         }
         let slideIdx = 0;
         state.templateSectionTitles.forEach((section: SlideSection) => {
-            if (section.title in props.slides.slides) {
+            if (section.title in props.slides.slidesContent) {
                 idxMap[section.title] = {}
-                if (props.slides.slides[section.title].egprompt)
-                    state.exampleSubsections = state.exampleSubsections.concat(props.slides.slides[section.title].egprompt)
+                if (props.slides.slidesContent[section.title].egprompt)
+                    state.exampleSubsections = state.exampleSubsections.concat(props.slides.slidesContent[section.title].egprompt)
                 state.sectionSubtitles[section.title] = section.subtitles
                 state.sectionTitles.push(section.title)
-                state.sectionPoints[section.title] = props.slides.slides[section.title].points
-                state.sectionCodeCells[section.title] = props.slides.slides[section.title].cells
-                state.sectionImages[section.title] = props.slides.slides[section.title].img
+                state.sectionPoints[section.title] = props.slides.slidesContent[section.title].points
+                state.sectionCodeCells[section.title] = props.slides.slidesContent[section.title].cells
+                state.sectionImages[section.title] = props.slides.slidesContent[section.title].img
                 section.subtitles.forEach(st => {
                     idxMap[section.title][st] = slideIdx
                     slideIdx++
@@ -172,61 +193,85 @@ function SlideViewer(props: IProps) {
         setSlideState(state)
         setUpdateHierarchySignal(updateHierarchySignal + 1)
 
-        // slides
-        //@ts-ignore
-        setSlideDeck(slideState.sectionTitles.map((title, tIdx) => {
-            return slideState.sectionSubtitles[title].map((subtitle, idx) => {
-                const imgs = slideState.sectionImages[title][subtitle]
-                let cellOutput = null
+        let titleFirstSlide = true
+        let latestTitle = ''
+        setSlideDeck(props.slides.slidesOrder.map((slide, index) => {
+            if (slide.startSlide) {
+                return <TitleSlide
+                    title={props.title}
+                    select={currentTitle === 'slides-title'}
+                    handleClick={() => {
+                        if (currentTitle === 'slides-title')
+                            return
+                        setCurrentTitle('slides-title')
+                    }}
+                    exportSlides={exportSlides}
+                    removeSlide={removeSlide}
+                    addSlide={addSlide}
+                />
+            }
+            if (slide.endSlide) {
+                return <QASlide
+                    select={currentTitle === 'slides-title'}
+                    handleClick={() => {
+                        if (currentTitle === 'slides-title')
+                            return
+                        setCurrentTitle('slides-title')
+                    }}
+                    exportSlides={exportSlides}
+                    removeSlide={removeSlide}
+                    addSlide={addSlide}
+                />
+            }
+            if (slide.title !== latestTitle) {
+                titleFirstSlide = true
+                latestTitle = slide.title
+            } else {
+                titleFirstSlide = false
+            }
+            const title = slide.title;
+            const subtitles = slide.subtitles;
+            let imgSrc: string | null = null
+            if (subtitles.length === 1) {
+                const imgs = slideState.sectionImages[title][subtitles[0]]
                 if (imgs) {
-
-                    // currently consider only the first one
-                    for (let i = 0; i < imgs.length; i++) {
-                        cellOutput = getOutputAreaElements(props.getNBCell(imgs[i]).node).output_arr[0].item(0)
-                        if (cellOutput !== null) {
-                            cellOutput = cellOutput.getElementsByTagName('img');
-                            if (cellOutput) {
-                                if (cellOutput[0] !== undefined) {
-                                    cellOutput = cellOutput[0].currentSrc
-                                    break
-                                }
-                            }
-                        }
-                    }
+                    imgSrc = getOutputImg(imgs)
                 }
-                return (
-                    <div key={idxMap[title][subtitle]} id={idx === 0 ? 'section-' + title : ''}>
+                if (imgSrc) {
+                    console.log('Get img')
+                }
+            }
+            return (
+                <div key={index} id={titleFirstSlide ? 'section-' + title : ''}>
 
-                        <Slide
-                            pasteClipboard={pasteClipboard}
-                            index={idxMap[title][subtitle]}
-                            title={title}
-                            subtitle={subtitle}
-                            egprompt={slideState.exampleSubsections.includes(subtitle)}
-                            points={slideState.sectionPoints[title][subtitle]}
-                            select={currentTitle === title && currentSubTitle === subtitle}
-                            cellOutput={(cellOutput as string | null)}
-                            handleClick={() => {
-                                if (currentTitle === title) {
-                                    if (currentSubTitle === subtitle)
-                                        return
-                                    setCurrentSubTitle(subtitle)
+                    <Slide
+                        pasteClipboard={pasteClipboard}
+                        index={index}
+                        title={title}
+                        subtitles={subtitles}
+                        egpromptSecs={slideState.exampleSubsections}
+                        points={slideState.sectionPoints[title]}
+                        select={currentTitle === title && currentSubTitle === subtitles[0]}
+                        cellOutput={(imgSrc as string | null)}
+                        handleClick={() => {
+                            if (currentTitle === title) {
+                                if (subtitles.includes(currentSubTitle))
                                     return
-                                }
-                                setCurrentTitle(title)
-                                setCurrentSubTitle(subtitle)
-                                hierarchyTitleRefs.current[tIdx].click();
-                                console.log(hierarchyTitleRefs)
-                            }}
-                            exportSlides={exportSlides}
-                            removeSlide={removeSlide}
-                            addSlide={addSlide}
-                        />
-                    </div>
-                )
-            })
-        })
-        )
+                                setCurrentSubTitle(subtitles[0])
+                                return
+                            }
+                            setCurrentTitle(title)
+                            setCurrentSubTitle(subtitles[0])
+                            hierarchyTitleRefs.current[slideState.sectionTitles.indexOf(title)].click();
+                            console.log(hierarchyTitleRefs)
+                        }}
+                        exportSlides={exportSlides}
+                        removeSlide={removeSlide}
+                        addSlide={addSlide}
+                    />
+                </div>
+            )
+        }))
     }, [props.slides, slideState, currentTitle, currentSubTitle])
 
     return (
@@ -279,19 +324,6 @@ function SlideViewer(props: IProps) {
                         }}
                     >
                         <div id={"slide-deck"}>
-                            <TitleSlide
-                                title={props.title}
-                                select={currentTitle === 'slides-title'}
-                                handleClick={() => {
-                                    if (currentTitle === 'slides-title') {
-                                        return
-                                    }
-                                    setCurrentTitle('slides-title')
-                                }}
-                                exportSlides={exportSlides}
-                                removeSlide={removeSlide}
-                                addSlide={addSlide}
-                            />
                             {slideDeck}
                         </div>
                     </div>

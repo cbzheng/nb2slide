@@ -1,7 +1,7 @@
 
 export const APISlideInfo = {
     template: [{ title: "introduction", subtitles: ['background'] }],
-    slides: {
+    slidesContent: {
         "introduction": {
             "points": { "background": ["house price"] },
             "cells": {
@@ -15,7 +15,14 @@ export const APISlideInfo = {
             'img': {},
             'egprompt': ['background']
         }
+    },
+    slidesOrder: [{
+        title: '',
+        subtitles: [''],
+        startSlide: true,
+        endSlide: false
     }
+    ]
 }
 
 

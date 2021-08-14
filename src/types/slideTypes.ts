@@ -2,13 +2,19 @@ export type SlideCellRelation = { cell_idx: number, dist: number }
 
 export type SlideAPIInfo = {
     template: Array<SlideSection>,
-    slides: {[title: string]: {
+    slidesContent: {[title: string]: {
         points: { [subtitle: string]: Array<string> },
         cells: { [subtitle: string]: Array<Array<SlideCellRelation>> },
         // images, from which cell output
         img: { [subtitle: string]: Array<number> },
         egprompt: Array<string>
     }}
+    slidesOrder: Array<{
+        title: string;
+        subtitles: Array<string>;
+        startSlide: boolean;
+        endSlide: boolean;
+    }>
 }
 
 export type SlideSection = {
