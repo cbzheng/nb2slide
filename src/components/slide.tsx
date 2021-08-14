@@ -27,7 +27,9 @@ interface IProps {
 function Slide(props: IProps) {
     const [subsectionList, setSubsectionList] = useState([<></>])
     const [layout, setLayout] = useState('row')
-    const [copySrc, setCopySrc] = useState(null as string | null)
+    // const [copySrc, setCopySrc] = useState(null as string | null)
+    const [imgSrcs, setImgSrcs] = useState([] as Array<string>)
+    const [imgBlocks, setImgBlocks] = useState(<></>)
     const [containEg, setContainEg] = useState(false)
 
     const pasteChart = () => {
@@ -42,17 +44,42 @@ function Slide(props: IProps) {
                 setLayout('column')
         }
         img.src = src
-        setCopySrc(src)
+        // setCopySrc(src)
+        setImgSrcs([...imgSrcs, src])
     }
 
     useEffect(() => {
-        const img = new Image();
-        img.onload = function () {
-            // @ts-ignore
-            if (this.width / this.height > 1.2)
-                setLayout('column')
+        let imgList = imgSrcs.map((src) => {
+            return <img
+                src={
+                    src
+                }
+                className='nb-cell-rect'
+                style={{
+                    width: layout == 'row' ? '50%' : '70%',
+                    marginTop: '3px',
+                    marginBottom: '3px'
+                }}
+            ></img>
+        })
+        setImgBlocks(
+            <div>
+                {imgList}
+            </div>
+        )
+    }, [imgSrcs])
+
+    useEffect(() => {
+        if (props.cellOutput) {
+            const img = new Image();
+            img.onload = function () {
+                // @ts-ignore
+                if (this.width / this.height > 1.2)
+                    setLayout('column')
+            }
+            img.src = props.cellOutput;
+            setImgSrcs([...imgSrcs, props.cellOutput])
         }
-        img.src = props.cellOutput;
     }, [props.cellOutput])
 
     useEffect(() => {
@@ -120,33 +147,7 @@ function Slide(props: IProps) {
                             {subsectionList}
                         </div>
                     </div>
-                    {
-                        props.cellOutput && <img
-                            src={
-                                props.cellOutput
-                            }
-                            className='nb-cell-rect'
-                            style={{
-                                width: layout == 'row' ? '50%' : '60%',
-                                marginTop: '3px',
-                                marginBottom: '3px'
-                            }}
-                        ></img>
-                    }
-                    {
-                        copySrc &&
-                        <img
-                            src={
-                                copySrc
-                            }
-                            className='nb-cell-rect'
-                            style={{
-                                width: layout == 'row' ? '50%' : '60%',
-                                marginTop: '3px',
-                                marginBottom: '3px'
-                            }}
-                        ></img>
-                    }
+                    {imgBlocks}
                     <div className='slide-index'>{props.index}</div>
                     <EditPanel
                         addSlide={props.addSlide}
