@@ -5,13 +5,14 @@ import { SlideAPIInfo } from '../types/slideTypes';
 import { requestAPI } from "../handler";
 import SlideViewer from './slideView';
 import ParameterView from './parameterView';
-import { mock } from '../mockdata';
+// import { mock } from '../mockdata';
 
 interface IProps {
     notebookCells: Array<StaticNotebookCell>
     navNBCb: Function
     getNBCell: Function
     clipboard: string
+    bindCellIdx: number
 }
 
 function NB2Slide(props: IProps) {
@@ -32,8 +33,8 @@ function NB2Slide(props: IProps) {
          })
     
         // test mock data
-        setSlides(JSON.parse(mock))
-        return
+        // setSlides(JSON.parse(mock))
+        // return
         await requestAPI<any>('get_slides', {
             body: data,
             method: "POST"
@@ -75,6 +76,7 @@ function NB2Slide(props: IProps) {
                             getNBCell={props.getNBCell}
                             title={title}
                             clipboard={props.clipboard}
+                            bindCellIdx={props.bindCellIdx}
                         />
                     </div>
             }

@@ -11,6 +11,7 @@ import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import NotebookVisView from './notebookVisView';
 import HierarchyView from './hierarchyView';
 import TitleSlide from './titleSlide';
+import { Toast, ToastContainer } from 'react-bootstrap';
 // import { TransitionGroup } from 'react-transition-group' 
 
 interface IProps {
@@ -19,7 +20,8 @@ interface IProps {
     navNBCb: Function,
     getNBCell: Function,
     title: string,
-    clipboard: string
+    clipboard: string,
+    bindCellIdx: number
 }
 
 type Action = {
@@ -38,10 +40,48 @@ function SlideViewer(props: IProps) {
     const hierarchyTitleRefs = useRef([])
     const [actionStore, setActionStore] = useState([] as Array<Action>)
     const [slideLoaded, setSlideLoaded] = useState(false)
+    const [informMsg, setInformMsg] = useState(<></>)
 
     const pasteClipboard = () => {
         return props.clipboard
     }
+
+    useEffect(() => {
+        if (props.bindCellIdx < 0) {
+            return
+        }
+        if (currentTitle.length <= 0 || currentSubTitle.length <= 0) {
+            setInformMsg(
+                <Toast onClose={() => { setInformMsg(<></>) }} delay={3000}>
+                    <Toast.Header>
+                        <strong className="me-auto">NB2Slide</strong>
+                    </Toast.Header>
+                    <Toast.Body>You must select a silde first to bind code cells!</Toast.Body>
+                </Toast>
+            )
+        }
+        setInformMsg(
+            <Toast onClose={() => { setInformMsg(<></>) }} delay={3000}>
+                <Toast.Header>
+                    <strong className="me-auto">NB2Slide</strong>
+                </Toast.Header>
+                <Toast.Body>Bind cde cell {props.bindCellIdx} with [{currentTitle}, {currentSubTitle}]</Toast.Body>
+            </Toast>
+        )
+    }, [props.bindCellIdx])
+
+    useEffect(() => {
+        if (props.clipboard.length > 0) {
+            setInformMsg(
+                <Toast onClose={() => { setInformMsg(<></>) }} delay={3000}>
+                    <Toast.Header>
+                        <strong className="me-auto">NB2Slide</strong>
+                    </Toast.Header>
+                    <Toast.Body>Copy the output to the clipboard!</Toast.Body>
+                </Toast>
+            )
+        }
+    }, [props.clipboard])
 
     const removeSlide = (title: string, subtitle: string) => {
         // store action for restore
@@ -254,6 +294,11 @@ function SlideViewer(props: IProps) {
                             />
                             {slideDeck}
                         </div>
+                    </div>
+                    <div style={{ position: 'absolute', left: '1rem', bottom: '1rem' }}>
+                        <ToastContainer>
+                            {informMsg}
+                        </ToastContainer>
                     </div>
                 </div>
             </div>

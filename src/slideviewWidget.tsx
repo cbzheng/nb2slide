@@ -12,12 +12,14 @@ export class SlideViewWidget extends ReactWidget {
   navNBCb: Function
   getNBCell: Function
   clipboard: string
+  bindCellIdx: number
 
   constructor() {
     super();
     this.slides = APISlideInfo
     this.notebookCells = []
     this.clipboard = ''
+    this.bindCellIdx = -1
   }
 
   setNavNBCb(cb: Function) {
@@ -37,6 +39,10 @@ export class SlideViewWidget extends ReactWidget {
     console.log(this.clipboard)
   }
 
+  setBindCellIdx(idx: number) {
+    this.bindCellIdx = idx
+  }
+
   render(): JSX.Element {
     return (
       <NB2Slide
@@ -44,6 +50,7 @@ export class SlideViewWidget extends ReactWidget {
         getNBCell={this.getNBCell}
         notebookCells={this.notebookCells}
         clipboard={this.clipboard}
+        bindCellIdx={this.bindCellIdx}
       ></NB2Slide>
     )
   }

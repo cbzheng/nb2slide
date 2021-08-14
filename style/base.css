@@ -1,3 +1,7 @@
 .outputCatch.jp-Button.minimal .jp-Icon {
-    color: black;
+    color: darkslategray;
+}
+
+.cellBinding.jp-Button.minimal .jp-Icon {
+    color: darkslategray;
 }

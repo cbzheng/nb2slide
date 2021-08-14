@@ -20,8 +20,33 @@
     bottom: 0;
     right: 0;
     padding: 3rem;
-    overflow-y: clip;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
+
+/* width */
+.slide::-webkit-scrollbar {
+  width: 4px;
+  margin-right: 2px;
+}
+
+/* Track */
+.slide::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+/* Handle */
+.slide::-webkit-scrollbar-thumb {
+  background: #eee;
+  border-radius: 2px;
+}
+
+/* Handle on hover */
+.slide::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
 
 #title {
     font-size: 2rem;
