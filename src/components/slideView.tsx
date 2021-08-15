@@ -27,11 +27,17 @@ interface IProps {
 
 type Action = {
     add: [string, string] | null,
-    remove: [string, string] | null
+    remove: [string, Array<string>] | null
 }
 
 function SlideViewer(props: IProps) {
     const [slideState, setSlideState] = useState(slideReducerInitialState)
+    const [slideOrder, setSlideOrder] = useState([] as Array<{
+        title: string;
+        subtitles: Array<string>;
+        startSlide: boolean;
+        endSlide: boolean;
+    }>)
     // const [slideIndexMap, setSlideIndexMap] = useState({} as {[tidx: string]: {[sidx: string]: number}})
     const [slideDeck, setSlideDeck] = useState([<></>])
     const [updateHierarchySignal, setUpdateHierarchySignal] = useState(0)
@@ -84,42 +90,36 @@ function SlideViewer(props: IProps) {
         }
     }, [props.clipboard])
 
-    const removeSlide = (title: string, subtitle: string) => {
+    const removeSlide = (slideIdx: number) => {
         // store action for restore
         const action: Action = {
             add: null,
-            remove: [title, subtitle]
+            remove: [slideOrder[slideIdx].title, slideOrder[slideIdx].subtitles]
         }
         setActionStore(actionStore => [...actionStore, action])
         console.log(actionStore)
 
-        let state = { ...slideState }
-        state.templateSectionTitles.forEach((section: SlideSection) => {
-            if (section.title === title) {
-                const index = section.subtitles.indexOf(subtitle)
-                section.subtitles.splice(index, 1)
-            }
-        })
-        setSlideState(state)
+        let order = [...slideOrder]
+        order.splice(slideIdx, 1)
+        setSlideOrder(order)
     }
 
-    const addSlide = (title: string, subtitle: string) => {
+    const addSlide = (slideIdx: number) => {
         // store action for restore
         const action: Action = {
             remove: null,
-            add: [title, subtitle]
+            add: ['title', 'subtitle']
         }
         setActionStore(actionStore => [...actionStore, action])
-        console.log(actionStore)
 
-        let state = { ...slideState }
-        state.templateSectionTitles.forEach((section: SlideSection) => {
-            if (section.title === title) {
-                const index = section.subtitles.indexOf(subtitle)
-                section.subtitles.splice(index + 1, 0, "subtitle")
-            }
+        let order = [...slideOrder]
+        order.splice(slideIdx, 0, {
+            title: slideOrder[slideIdx].title,
+            subtitles: ['untitle'],
+            startSlide: false,
+            endSlide: false
         })
-        setSlideState(state)
+        setSlideOrder(order)
     }
 
     const exportSlides = async () => {
@@ -162,8 +162,8 @@ function SlideViewer(props: IProps) {
     }
 
     useEffect(() => {
+        setSlideOrder(props.slides.slidesOrder.slice())
         let state = slideReducerInitialState
-        let idxMap = {} as { [tidx: string]: { [sidx: string]: number } }
         state.sectionTitles = []
         state.exampleSubsections = []
         if (!slideLoaded) {
@@ -172,10 +172,8 @@ function SlideViewer(props: IProps) {
         } else {
             state.templateSectionTitles = slideState.templateSectionTitles
         }
-        let slideIdx = 0;
         state.templateSectionTitles.forEach((section: SlideSection) => {
             if (section.title in props.slides.slidesContent) {
-                idxMap[section.title] = {}
                 if (props.slides.slidesContent[section.title].egprompt)
                     state.exampleSubsections = state.exampleSubsections.concat(props.slides.slidesContent[section.title].egprompt)
                 state.sectionSubtitles[section.title] = section.subtitles
@@ -183,19 +181,18 @@ function SlideViewer(props: IProps) {
                 state.sectionPoints[section.title] = props.slides.slidesContent[section.title].points
                 state.sectionCodeCells[section.title] = props.slides.slidesContent[section.title].cells
                 state.sectionImages[section.title] = props.slides.slidesContent[section.title].img
-                section.subtitles.forEach(st => {
-                    idxMap[section.title][st] = slideIdx
-                    slideIdx++
-                })
             }
         })
 
         setSlideState(state)
         setUpdateHierarchySignal(updateHierarchySignal + 1)
+    }, [props.slides])
 
+    useEffect(() => {
+        console.log(slideOrder)
         let titleFirstSlide = true
         let latestTitle = ''
-        setSlideDeck(props.slides.slidesOrder.map((slide, index) => {
+        setSlideDeck(slideOrder.map((slide, index) => {
             if (slide.startSlide) {
                 return <TitleSlide
                     title={props.title}
@@ -268,11 +265,43 @@ function SlideViewer(props: IProps) {
                         exportSlides={exportSlides}
                         removeSlide={removeSlide}
                         addSlide={addSlide}
+                        modifySlide={modifySlide}
                     />
                 </div>
             )
         }))
-    }, [props.slides, slideState, currentTitle, currentSubTitle])
+    }, [slideOrder, slideState, currentTitle, currentSubTitle])
+
+    const modifySlide = (
+        slideIdx: number,
+        title: string,
+        oldSubtitle: string,
+        newContent: { [subtitle: string]: Array<string> }
+    ) => {
+        const order = [...slideOrder]
+        let state = { ...slideState }
+        const slideStructure = order[slideIdx]
+        let index = slideStructure.subtitles.findIndex((c) => c === oldSubtitle)
+        if (index >= 0) {
+            slideStructure.subtitles.splice(index, 1)
+        } else {
+            index = 0
+        }
+        const titlePoints = state.sectionPoints[title]
+
+        Object.keys(newContent).forEach((subtitle, i) => {
+            slideStructure.subtitles.splice(index + i, 0, subtitle)
+            titlePoints[subtitle] = newContent[subtitle]
+        })
+
+        if (state.exampleSubsections.includes(oldSubtitle)) {
+            let i = state.exampleSubsections.findIndex((c) => c === oldSubtitle)
+            state.exampleSubsections.splice(i, 1)
+        }
+
+        setSlideOrder(order)
+        setSlideState(state)
+    }
 
     return (
         <>

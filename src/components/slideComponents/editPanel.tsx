@@ -78,7 +78,7 @@ function EditPanel(props: IProps) {
                         <FontAwesomeIcon
                             className={"edit-icon icon-add"}
                             icon={faPlusSquare}
-                            onClick={() => props.addSlide(props.title, props.subtitle)}
+                            onClick={() => props.addSlide()}
                         />
                     </Button>
                 </div>
@@ -87,7 +87,7 @@ function EditPanel(props: IProps) {
                         <FontAwesomeIcon
                             className={"edit-icon icon-minus"}
                             icon={faMinusSquare}
-                            onClick={() => props.removeSlide(props.title, props.subtitle)}
+                            onClick={() => props.removeSlide()}
                         />
                     </Button>
                 </div>

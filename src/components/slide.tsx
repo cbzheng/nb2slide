@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, FormControl } from 'react-bootstrap';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import '../../style/slideview.css'
 // import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
@@ -20,6 +21,7 @@ interface IProps {
     exportSlides: Function,
     removeSlide: Function,
     addSlide: Function,
+    modifySlide: Function,
     egpromptSecs: Array<string>,
     pasteClipboard: Function
 }
@@ -31,6 +33,28 @@ function Slide(props: IProps) {
     const [imgSrcs, setImgSrcs] = useState([] as Array<string>)
     const [imgBlocks, setImgBlocks] = useState(<></>)
     const [containEg, setContainEg] = useState(false)
+    const [editingSubtitle, setEditingSubtitle] = useState('')
+    const inputContent = useRef(null);
+
+    const parseContent = (content: string) => {
+        const stns = content.split('\n')
+        const results = {} as {
+            [subtitle: string]: Array<string>
+        }
+        let latestSubtitle = null as string | null
+        for (let i = 0; i < stns.length; i++) {
+            if (stns[i].length > 2 && stns[i].slice(0, 2) === '* ') {
+                if (!latestSubtitle) {
+                    return Error
+                }
+                results[latestSubtitle].push(stns[i].slice(2))
+            } else {
+                latestSubtitle = stns[i]
+                results[latestSubtitle] = []
+            }
+        }
+        return results
+    }
 
     const pasteChart = () => {
         const src = props.pasteClipboard()
@@ -84,38 +108,88 @@ function Slide(props: IProps) {
 
     useEffect(() => {
         setSubsectionList(props.subtitles.map(subtitle => {
-            const egOrNot = props.egpromptSecs.includes(subtitle)
-            setContainEg(egOrNot)
             let content = <></>
 
-            if (egOrNot) {
-                content = <ExamplePrompt points={props.points[subtitle]}></ExamplePrompt>
-            } else {
+            if (subtitle === editingSubtitle) {
+                let simpleMD = [] as Array<string>
+                simpleMD.push(subtitle)
+                if (props.points[subtitle])
+                    props.points[subtitle].forEach(p => {
+                        simpleMD.push("* " + p)
+                    })
+
                 content = (
-                    <ul
-                        className='slide-point-list'
-                    >
-                        {
-                            props.points[subtitle].map(point => {
-                                return <li className='slide-point'>
-                                    {point}
-                                </li>
-                            })
-                        }
-                    </ul>
+                    <div>
+                        <FormControl
+                            as='textarea'
+                            ref={inputContent}
+                            style={{ height: '70px' }}
+                            defaultValue={simpleMD.join('\n')}
+                        />
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => {
+                                console.log(inputContent.current.value)
+                                try {
+                                    const parsedResults = parseContent(inputContent.current.value)
+                                    props.modifySlide(props.index, props.title, subtitle, parsedResults)
+                                    setEditingSubtitle('')
+                                } catch (Error) {
+                                    alert('Not valide slide modification!')
+                                }
+                            }}
+                        >Ok</Button>
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => {
+                                setEditingSubtitle('')
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    </div>
                 )
+            } else {
+                const egOrNot = props.egpromptSecs.includes(subtitle)
+                setContainEg(egOrNot)
+                if (egOrNot) {
+                    content = <ExamplePrompt points={props.points[subtitle]}></ExamplePrompt>
+                } else {
+                    content = (
+                        <ul
+                            className='slide-point-list'
+                        >
+                            {
+                                props.points[subtitle] && props.points[subtitle].map(point => {
+                                    return <li className='slide-point'>
+                                        {point}
+                                    </li>
+                                })
+                            }
+                        </ul>
+                    )
+                }
             }
 
             return (
-                <div>
-                    <h4>
-                        {subtitle}
-                    </h4>
-                    {content}
+                <div
+                    className='subtitle-content'
+                    onDoubleClick={() => {
+                        setEditingSubtitle(subtitle)
+                    }}
+                >
+                    {
+                        subtitle === editingSubtitle ? content : <>
+                            <h4>
+                                {subtitle}
+                            </h4>
+                            {content}
+                        </>
+                    }
                 </div>
             )
         }))
-    }, [props.subtitles, props.points])
+    }, [props.subtitles, props.points, editingSubtitle])
 
 
     return (
@@ -150,8 +224,8 @@ function Slide(props: IProps) {
                     {imgBlocks}
                     <div className='slide-index'>{props.index}</div>
                     <EditPanel
-                        addSlide={props.addSlide}
-                        removeSlide={props.removeSlide}
+                        addSlide={() => { props.addSlide(props.index) }}
+                        removeSlide={() => { props.removeSlide(props.index) }}
                         title={props.title}
                         subtitle={props.subtitles[0]}
                         exportSlides={props.exportSlides}
