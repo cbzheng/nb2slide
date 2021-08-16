@@ -15,6 +15,11 @@ export type SlideAPIInfo = {
         startSlide: boolean;
         endSlide: boolean;
     }>
+    sectionWhy: {[subsection: string]: string}
+    sectionHow: { [subsection: string]: {
+        text: string,
+        code: string
+    } }
 }
 
 export type SlideSection = {

@@ -26,7 +26,9 @@ function QASlide(props: IProps) {
                         addSlide={props.addSlide}
                         removeSlide={props.removeSlide}
                         title={null}
-                        subtitle={null}
+                        subtitles={null}
+                        getWhy={null}
+                        getHow={null}
                         exportSlides={props.exportSlides}
                         paste={() => {}}
                     ></EditPanel>

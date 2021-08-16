@@ -23,7 +23,9 @@ interface IProps {
     addSlide: Function,
     modifySlide: Function,
     egpromptSecs: Array<string>,
-    pasteClipboard: Function
+    pasteClipboard: Function,
+    getHow: Function,
+    getWhy: Function
 }
 
 function Slide(props: IProps) {
@@ -123,7 +125,7 @@ function Slide(props: IProps) {
                         <FormControl
                             as='textarea'
                             ref={inputContent}
-                            style={{ height: '70px' }}
+                            style={{ height: '100px' }}
                             defaultValue={simpleMD.join('\n')}
                         />
                         <Button
@@ -227,9 +229,11 @@ function Slide(props: IProps) {
                         addSlide={() => { props.addSlide(props.index) }}
                         removeSlide={() => { props.removeSlide(props.index) }}
                         title={props.title}
-                        subtitle={props.subtitles[0]}
+                        subtitles={props.subtitles}
                         exportSlides={props.exportSlides}
                         paste={pasteChart}
+                        getWhy={props.getWhy}
+                        getHow={props.getHow}
                     />
                 </div>
             </div>

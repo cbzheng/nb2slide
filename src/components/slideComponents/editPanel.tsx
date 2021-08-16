@@ -10,14 +10,18 @@ import React from 'react';
 import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import '../../../style/slideview.css'
 // import ExportPopover from './exportPopover';
+import { CopyBlock, atomOneLight } from 'react-code-blocks'
+
 
 interface IProps {
     exportSlides: Function,
     addSlide: Function,
     removeSlide: Function,
     title: string,
-    subtitle: string,
-    paste: Function
+    subtitles: Array<string>,
+    paste: Function,
+    getWhy: Function,
+    getHow: Function
 }
 
 function EditPanel(props: IProps) {
@@ -34,16 +38,51 @@ function EditPanel(props: IProps) {
         </Popover.Body>
     </Popover>
 
+    const constructHelp = () => {
+        if (!props.subtitles) {
+            return <Popover.Header as="h4">Help</Popover.Header>
+        }
+        return props.subtitles.map(subtitle => {
+            const why = props.getWhy(subtitle)
+            const how = props.getHow(subtitle)
+            let whyDiv = <></>;
+            let howDiv = <></>;
+            console.log('get')
+
+            if (why && why !== undefined) {
+                whyDiv = <div>
+                    <b>WHY: </b> {why}
+                </div>
+            }
+
+            if (how && how !== undefined) {
+                howDiv = <div>
+                    <b>HOW: </b> {how.text}
+                    {how.code.length > 0 ?
+                        <CopyBlock
+                            text={how.code}
+                            language={'python'}
+                            wrapLines
+                            theme={	atomOneLight}
+                        /> :
+                        null
+                    }
+                </div>
+            }
+            return (
+                <>
+                    <Popover.Header as="h4">Help: {subtitle}</Popover.Header>
+                    <Popover.Body style={{ display: 'flex', flexDirection: 'column' }}>
+                        {whyDiv}
+                        {howDiv}
+                    </Popover.Body>
+                </>
+            )
+        })
+    }
+
     const popoverHelp = <Popover id="popover-export">
-        <Popover.Header as="h4">Help</Popover.Header>
-        <Popover.Body style={{ display: 'flex', flexDirection: 'column' }}>
-            <div>
-                <b>Why:</b>
-            </div>
-            <div>
-                <b>How:</b>
-            </div>
-        </Popover.Body>
+        {constructHelp()}
     </Popover>
 
     return (

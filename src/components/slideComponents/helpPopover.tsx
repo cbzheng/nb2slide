@@ -5,6 +5,9 @@ import '../../../style/slideview.css'
 
 interface IProps {
     exportSlides: Function
+    subtitles: Array<string>,
+    getWhy: Function,
+    getHow: Function
 }
 
 function HelpPopover(props: IProps) {

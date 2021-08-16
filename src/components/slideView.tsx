@@ -245,6 +245,12 @@ function SlideViewer(props: IProps) {
                         pasteClipboard={pasteClipboard}
                         index={index}
                         title={title}
+                        getWhy={(subtitle: string) => {
+                            return  props.slides.sectionWhy[subtitle]
+                        }}
+                        getHow={(subtitle: string) => {
+                            return props.slides.sectionHow[subtitle]
+                        }}
                         subtitles={subtitles}
                         egpromptSecs={slideState.exampleSubsections}
                         points={slideState.sectionPoints[title]}

@@ -106,8 +106,6 @@ export class NB2Slide {
         this.addTrigger()
         this.addToMenu()
         this.tracker.activeCellChanged.connect((sender) => {
-            console.log(sender)
-            // this.cellsIndex = computeCurCellsIdx(cells)
         }, this);
     }
 
@@ -131,10 +129,10 @@ export class NB2Slide {
                 alert('You should start the NB2Slide widget to use this function')
                 return
             }
-            const cellIdx = this.notebookTools.activeNotebookPanel.content.activeCellIndex
+            const activeCell = this.notebookTools.activeNotebookPanel.content.activeCell
             let cellOutput = null
             try {
-                cellOutput = getOutputAreaElements(this.cellsIndex[cellIdx].node).output_arr[0].item(0).getElementsByTagName('img')[0].currentSrc;
+                cellOutput = getOutputAreaElements(activeCell.node).output_arr[0].item(0).getElementsByTagName('img')[0].currentSrc;
             } 
             catch(error) {
                 alert('Do not find image type output! Only support image-based output migration now!')

@@ -22,7 +22,9 @@ export const APISlideInfo = {
         startSlide: true,
         endSlide: false
     }
-    ]
+    ],
+    sectionWhy: {},
+    sectionHow: {}
 }
 
 

@@ -62,7 +62,9 @@
     "html2canvas": "^1.1.5",
     "rc-slider": "^9.7.2",
     "react-bootstrap": "^2.0.0-beta.0",
-    "react-transition-group": "^2.9.0"
+    "react-code-blocks": "*",
+    "react-transition-group": "^2.9.0",
+    "shiki": "^0.9.6"
   },
   "devDependencies": {
     "@jupyterlab/builder": "^3.0.0",
