@@ -105,7 +105,10 @@ export class NB2Slide {
         // activate
         this.addTrigger()
         this.addToMenu()
-        // this.tracker.activeCellChanged.connect(this.onActiveCellChanged, this);
+        this.tracker.activeCellChanged.connect((sender) => {
+            console.log(sender)
+            // this.cellsIndex = computeCurCellsIdx(cells)
+        }, this);
     }
 
     addTrigger(): void {

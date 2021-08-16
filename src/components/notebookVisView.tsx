@@ -4,7 +4,8 @@ import { getOutputAreaElements, StaticNotebookCell } from '../notebookUtils';
 import * as d3 from 'd3';
 import { SlideCellRelation } from '../types/slideTypes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPoll, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { faPoll } from '@fortawesome/free-solid-svg-icons'
+import Switch from '@material-ui/core/Switch';
 
 interface IProps {
     cells: Array<StaticNotebookCell>,
@@ -16,8 +17,8 @@ interface IProps {
 }
 
 function NotebookVisView(props: IProps) {
-    const [isShowOutputs, setIsShowOutputs] = useState(false)
-    const [followCellLength, setFollowCellLength] = useState(false)
+    const [isShowOutputs, setIsShowOutputs] = useState(true)
+    const [followCellLength, setFollowCellLength] = useState(true)
     const [notebookData, setNotebookData] = useState([])
     const [notebookVis, setNotebookVis] = useState(<></>)
     const [currentRelatedCells, setCurrentRelatedCells] = useState({} as { [cell_idx: number]: SlideCellRelation })
@@ -138,7 +139,7 @@ function NotebookVisView(props: IProps) {
             if (followCellLength) {
                 // visualize the code
                 codeDetails = cellData.lines.map((line: Number) => {
-                    return <div 
+                    return <div
                         style={{
                             width: codeLineScale(line).toString() + 'px',
                             height: '2px',
@@ -205,20 +206,16 @@ function NotebookVisView(props: IProps) {
                     style={{
                         color: isShowOutputs ? 'royalblue' : 'lightgrey'
                     }}
-                    onClick={() => {
+                />
+                <Switch
+                    defaultChecked={true}
+                    onChange={() => {
+                        setFollowCellLength(!followCellLength)
                         setIsShowOutputs(!isShowOutputs)
                     }}
-                />
-                <FontAwesomeIcon
-                    className={"linking-icon icon-output"}
-                    icon={faFileAlt}
-                    size='2x'
-                    style={{
-                        color: followCellLength ? 'royalblue' : 'lightgrey'
-                    }}
-                    onClick={() => {
-                        setFollowCellLength(!followCellLength)
-                    }}
+                    color="primary"
+                    name="checkedB"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
             </div>
             <div id={"nb-vis-view"}>
