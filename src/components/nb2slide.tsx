@@ -5,7 +5,7 @@ import { SlideAPIInfo } from '../types/slideTypes';
 import { requestAPI } from "../handler";
 import SlideViewer from './slideView';
 import ParameterView from './parameterView';
-// import { mock } from '../mockdata';
+import { mock, mock1 } from '../mockdata';
 
 interface IProps {
     notebookCells: Array<StaticNotebookCell>
@@ -26,15 +26,18 @@ function NB2Slide(props: IProps) {
         title: string
     ) => {
         setTitle(title)
-        const data = JSON.stringify({ 
+        const data = JSON.stringify({
             "notebook": props.notebookCells,
             "audience": audience,
             "detailLevel": detailLevel
-         })
-    
-        // test mock data
-        // setSlides(JSON.parse(mock))
-        // return
+        })
+
+        if (audience === 0) {
+            setSlides(JSON.parse(mock))
+        } else {
+            setSlides(JSON.parse(mock1))
+        }
+        return
         await requestAPI<any>('get_slides', {
             body: data,
             method: "POST"
@@ -54,7 +57,7 @@ function NB2Slide(props: IProps) {
         setMode('slides')
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(props.clipboard)
     }, [props.clipboard])
 
