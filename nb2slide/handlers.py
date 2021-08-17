@@ -69,7 +69,7 @@ def generateSlides(input_data):
     # requests_log.setLevel(logging.DEBUG)
     # requests_log.propagate = True
 
-    url = "http://0.0.0.0:8080/nbupload"
+    url = "http://47.100.237.210:8080/nbupload"
     data = input_data
     x = requests.post(url, json=data)
     return x
@@ -88,7 +88,7 @@ def exportSlides(input_data):
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True
 
-    url = "http://0.0.0.0:8080/slidesexport"
+    url = "http://47.100.237.210:8080/slidesexport"
     data = input_data
     x = requests.post(url, json=data)
     return x
