@@ -257,7 +257,7 @@ function SlideViewer(props: IProps) {
                 }
             }
             return (
-                <div key={index} id={titleFirstSlide ? 'section-' + title : ''}>
+                <div key={slide.title + slide.subtitles[0]} id={titleFirstSlide ? 'section-' + title : ''}>
 
                     <Slide
                         pasteClipboard={props.clipboard}

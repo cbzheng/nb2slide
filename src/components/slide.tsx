@@ -7,7 +7,7 @@ import '../../style/slideview.css'
 
 import ExamplePrompt from './examplePrompt';
 import EditPanel from './slideComponents/editPanel';
-import SlideImage from './slideComponents/image';
+// import SlideImage from './slideComponents/image';
 
 interface IProps {
     index: number,
@@ -45,12 +45,11 @@ function Slide(props: IProps) {
         const results = {} as {
             [subtitle: string]: Array<string>
         }
-        let latestSubtitle = null as string | null
+        let latestSubtitle = ' ' as string
         for (let i = 0; i < stns.length; i++) {
-            if (stns[i].length > 2 && stns[i].slice(0, 2) === '* ') {
-                if (!latestSubtitle) {
-                    return Error
-                }
+            if (stns[i].length > 1 && stns[i].slice(0, 1) === '*') {
+                if (!(latestSubtitle in results))
+                    results[latestSubtitle] = []
                 results[latestSubtitle].push(stns[i].slice(2))
             } else {
                 latestSubtitle = stns[i]
@@ -80,23 +79,24 @@ function Slide(props: IProps) {
         }
         img.src = src
         // setCopySrc(src)
+        console.log("add images in slides")
         setImgSrcs([...imgSrcs, src])
     }
 
     useEffect(() => {
         let imgList = imgSrcs.map((src) => {
-            // return <img
-            //     src={
-            //         src
-            //     }
-            //     className='nb-cell-rect'
-            //     style={{
-            //         width: layout == 'row' ? '50%' : '70%',
-            //         marginTop: '3px',
-            //         marginBottom: '3px'
-            //     }}
-            // ></img>
-            return <SlideImage src={src} layout={layout}></SlideImage>
+            return <img
+                src={
+                    src
+                }
+                className='nb-cell-rect'
+                style={{
+                    width: layout == 'row' ? '50%' : '70%',
+                    marginTop: '3px',
+                    marginBottom: '3px'
+                }}
+            ></img>
+            // return <SlideImage src={src} layout={layout}></SlideImage>
         })
         setImgBlocks(
             <div>
@@ -115,6 +115,7 @@ function Slide(props: IProps) {
             }
             img.src = props.cellOutput;
             setImgSrcs([...imgSrcs, props.cellOutput])
+            console.log("add images in slides")
         }
     }, [props.cellOutput])
 
@@ -127,7 +128,7 @@ function Slide(props: IProps) {
                 simpleMD.push(subtitle)
                 if (props.points[subtitle])
                     props.points[subtitle].forEach(p => {
-                        simpleMD.push("* " + p)
+                        simpleMD.push("*" + p)
                     })
 
                 content = (
@@ -149,8 +150,12 @@ function Slide(props: IProps) {
                                         newValue: inputContent.current.value
                                     })
                                     const parsedResults = parseContent(inputContent.current.value)
-                                    props.modifySlide(props.index, props.title, subtitle, parsedResults)
-                                    setEditingSubtitle('')
+                                    if (parsedResults && parsedResults.keys.length > 0) {
+                                        props.modifySlide(props.index, props.title, subtitle, parsedResults)
+                                        setEditingSubtitle('')
+                                    } else {
+                                        alert('Not valide input, check the User Guide, example:\nsubtitle1\n*oint1\n*point2')
+                                    }
                                 } catch (Error) {
                                     alert('Not valide slide modification!')
                                 }
