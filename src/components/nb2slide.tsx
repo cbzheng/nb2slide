@@ -5,7 +5,7 @@ import { SlideAPIInfo } from '../types/slideTypes';
 import { requestAPI } from "../handler";
 import SlideViewer from './slideView';
 import ParameterView from './parameterView';
-import { mock, mock1 } from '../mockdata';
+// import { mock, mock1 } from '../mockdata';
 
 interface IProps {
     notebookCells: Array<StaticNotebookCell>
@@ -15,10 +15,54 @@ interface IProps {
     bindCellIdx: number
 }
 
+export type LogItem = {
+    actionName: string,
+    timestamp: string,
+    oldValue: string,
+    newValue: string
+}
+
+class Logger {
+    logStore: Array<LogItem>
+    currentLogStore: Array<LogItem>
+    AddLogItem: Function
+    SendLogs: Function
+
+    constructor() {
+        this.logStore = []
+        this.currentLogStore = []
+        this.AddLogItem = (item: LogItem) => {
+            this.logStore.push(item)
+            this.currentLogStore.push(item)
+        }
+
+        this.SendLogs = () => {
+            setInterval(() => {
+                if (this.currentLogStore.length > 0) {
+                    console.log(this.currentLogStore)
+                    requestAPI<any>('log', {
+                        body: JSON.stringify(this.currentLogStore),
+                        method: "POST"
+                    })
+                        .catch(reason => {
+                            console.error(
+                                `The nb2slide server extension appears to be missing.\n${reason}`
+                            );
+                        });
+                    this.currentLogStore = []
+                }
+            }, 10000)
+        }
+    }
+
+}
+
 function NB2Slide(props: IProps) {
     const [slides, setSlides] = useState({} as SlideAPIInfo)
     const [title, setTitle] = useState('')
     const [mode, setMode] = useState('parameter')
+    const logger = new Logger()
+    logger.SendLogs()
 
     const updateNotebookInfo = async (
         audience: number,
@@ -32,12 +76,12 @@ function NB2Slide(props: IProps) {
             "detailLevel": detailLevel
         })
 
-        if (audience === 0) {
-            setSlides(JSON.parse(mock))
-        } else {
-            setSlides(JSON.parse(mock1))
-        }
-        return
+        // if (audience === 0) {
+        //     setSlides(JSON.parse(mock))
+        // } else {
+        //     setSlides(JSON.parse(mock1))
+        // }
+        // return
         await requestAPI<any>('get_slides', {
             body: data,
             method: "POST"
@@ -58,7 +102,12 @@ function NB2Slide(props: IProps) {
     }
 
     useEffect(() => {
-        console.log(props.clipboard)
+        logger.AddLogItem({
+            actionName: 'copy-output',
+            timestamp: new Date().toUTCString(),
+            oldValue: '',
+            newValue: ''
+        })
     }, [props.clipboard])
 
     return (
@@ -69,6 +118,7 @@ function NB2Slide(props: IProps) {
                         <ParameterView
                             generateSlides={updateNotebookInfo}
                             afterGenerate={afterGenerate}
+                            log={logger.AddLogItem}
                         ></ParameterView>
                     </div> :
                     <div id={'slides-deck-widget'}>
@@ -80,6 +130,7 @@ function NB2Slide(props: IProps) {
                             title={title}
                             clipboard={props.clipboard}
                             bindCellIdx={props.bindCellIdx}
+                            log={logger.AddLogItem}
                         />
                     </div>
             }

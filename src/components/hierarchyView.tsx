@@ -14,7 +14,8 @@ interface IProps {
     slideState: SlideReducerState,
     setHierarchyRef: Function,
     slideOverviewHide: boolean,
-    setSlideOverviewHide: Function
+    setSlideOverviewHide: Function,
+    log: Function
 }
 
 function HierarchyView(props: IProps) {
@@ -29,7 +30,12 @@ function HierarchyView(props: IProps) {
             const subtitles = props.slideState.sectionSubtitles[title]
             const subtitleList = subtitles.map(subtitle => {
                 return (
-                    <ListGroup.Item>
+                    <ListGroup.Item onClick={() => props.log({
+                        actionName: 'toc-nav',
+                        timestamp: new Date().toUTCString(),
+                        oldValue: '',
+                        newValue: title + ":" + subtitle
+                    })}>
                         <a className='slide-link' href={'#section-' + title + '-sub-' + subtitle}> {subtitle}</a>
                     </ListGroup.Item>
                 )
@@ -38,7 +44,8 @@ function HierarchyView(props: IProps) {
                 <Accordion.Item
                     eventKey={idx.toString()}
                 >
-                    <Accordion.Button ref={(el: any) => { props.setHierarchyRef(el, idx) }}>
+                    <Accordion.Button ref={(el: any) => { props.setHierarchyRef(el, idx) }}
+                    >
                         <a className='slide-link' href={'#section-' + title}>
                             {title}
                         </a>

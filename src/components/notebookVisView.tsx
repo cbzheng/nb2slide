@@ -13,7 +13,8 @@ interface IProps {
     getNBCell: Function
     slidesMapToCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
     selectedTitle: string,
-    selectedSubTitle: string
+    selectedSubTitle: string,
+    log: Function
 }
 
 function NotebookVisView(props: IProps) {
@@ -165,6 +166,13 @@ function NotebookVisView(props: IProps) {
                             cursor: 'pointer'
                         }}
                         onClick={() => {
+                            const action = cellData.index in currentRelatedCells? 'color-cell-nav': 'code-cell-nav'
+                            props.log({
+                                actionName: action,
+                                timestamp: new Date().toUTCString(),
+                                oldValue: '',
+                                newValue: cellData.index
+                            })
                             props.navNBCb(cellData.index)
                         }}
                     >
@@ -184,6 +192,12 @@ function NotebookVisView(props: IProps) {
                                 marginBottom: '3px'
                             }}
                             onClick={() => {
+                                props.log({
+                                    actionName: 'image-cell-nav',
+                                    timestamp: new Date().toUTCString(),
+                                    oldValue: '',
+                                    newValue: cellData.index
+                                })
                                 props.navNBCb(cellData.index)
                             }}
                         ></img>

@@ -8,6 +8,7 @@ import { FormControl } from 'react-bootstrap';
 interface IProps {
     generateSlides: Function
     afterGenerate: Function
+    log: Function
 }
 
 function ParameterView(props: IProps) {
@@ -17,6 +18,27 @@ function ParameterView(props: IProps) {
     const [submit, setSubmit] = useState(false)
 
     const generate = () => {
+        props.log({
+            actionName: 'set-audience',
+            timestamp: new Date().toUTCString(),
+            oldValue: '',
+            newValue: audience.toString()
+        })
+
+        props.log({
+            actionName: 'set-LOD',
+            timestamp: new Date().toUTCString(),
+            oldValue: '',
+            newValue: detailLevel.toString()
+        })
+
+        props.log({
+            actionName: 'set-title',
+            timestamp: new Date().toUTCString(),
+            oldValue: '',
+            newValue: title
+        })
+
         props.generateSlides(audience, detailLevel, title).then(() => {
             props.afterGenerate()
         })

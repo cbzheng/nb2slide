@@ -22,7 +22,8 @@ interface IProps {
     getNBCell: Function,
     title: string,
     clipboard: string,
-    bindCellIdx: number
+    bindCellIdx: number,
+    log: Function
 }
 
 type Action = {
@@ -49,9 +50,9 @@ function SlideViewer(props: IProps) {
     const [slideLoaded, setSlideLoaded] = useState(false)
     const [informMsg, setInformMsg] = useState(<></>)
 
-    const pasteClipboard = () => {
-        return props.clipboard
-    }
+    // const pasteClipboard = () => {
+    //     return props.clipboard
+    // }
 
     useEffect(() => {
         if (props.bindCellIdx < 0) {
@@ -99,6 +100,13 @@ function SlideViewer(props: IProps) {
         setActionStore(actionStore => [...actionStore, action])
         console.log(actionStore)
 
+        props.log({
+            actionName: 'remove-slide',
+            timestamp: new Date().toUTCString(),
+            oldValue: slideOrder[slideIdx].title + ': ' + slideOrder[slideIdx].subtitles[0],
+            newValue: ''
+        })
+
         let order = [...slideOrder]
         order.splice(slideIdx, 1)
         setSlideOrder(order)
@@ -113,9 +121,17 @@ function SlideViewer(props: IProps) {
         setActionStore(actionStore => [...actionStore, action])
 
         let order = [...slideOrder]
+
+        props.log({
+            actionName: 'add-slide',
+            timestamp: new Date().toUTCString(),
+            oldValue: slideOrder[slideIdx].title + ': ' + slideOrder[slideIdx].subtitles[0],
+            newValue: 'untitle'+order.length.toString()
+        })
+
         order.splice(slideIdx, 0, {
             title: slideOrder[slideIdx].title,
-            subtitles: ['untitle'],
+            subtitles: ['untitle'+order.length.toString()],
             startSlide: false,
             endSlide: false
         })
@@ -205,6 +221,7 @@ function SlideViewer(props: IProps) {
                     exportSlides={exportSlides}
                     removeSlide={removeSlide}
                     addSlide={addSlide}
+                    log={props.log}
                 />
             }
             if (slide.endSlide) {
@@ -218,6 +235,7 @@ function SlideViewer(props: IProps) {
                     exportSlides={exportSlides}
                     removeSlide={removeSlide}
                     addSlide={addSlide}
+                    log={props.log}
                 />
             }
             if (slide.title !== latestTitle) {
@@ -242,7 +260,7 @@ function SlideViewer(props: IProps) {
                 <div key={index} id={titleFirstSlide ? 'section-' + title : ''}>
 
                     <Slide
-                        pasteClipboard={pasteClipboard}
+                        pasteClipboard={props.clipboard}
                         index={index}
                         title={title}
                         getWhy={(subtitle: string) => {
@@ -266,17 +284,17 @@ function SlideViewer(props: IProps) {
                             setCurrentTitle(title)
                             setCurrentSubTitle(subtitles[0])
                             hierarchyTitleRefs.current[slideState.sectionTitles.indexOf(title)].click();
-                            console.log(hierarchyTitleRefs)
                         }}
                         exportSlides={exportSlides}
                         removeSlide={removeSlide}
                         addSlide={addSlide}
                         modifySlide={modifySlide}
+                        log={props.log}
                     />
                 </div>
             )
         }))
-    }, [slideOrder, slideState, currentTitle, currentSubTitle])
+    }, [slideOrder, slideState, currentTitle, currentSubTitle, props.clipboard])
 
     const modifySlide = (
         slideIdx: number,
@@ -333,6 +351,7 @@ function SlideViewer(props: IProps) {
                                 slidesMapToCells={slideState.sectionCodeCells}
                                 selectedTitle={currentTitle}
                                 selectedSubTitle={currentSubTitle}
+                                log={props.log}
                             />
                         </div>
                         <div
@@ -349,6 +368,7 @@ function SlideViewer(props: IProps) {
                                 setHierarchyRef={(el: any, idx: number) => (hierarchyTitleRefs.current[idx] = el)}
                                 slideOverviewHide={slideOverviewHide}
                                 setSlideOverviewHide={setSlideOverviewHide}
+                                log={props.log}
                             ></HierarchyView>
                         </div>
                     </div>

@@ -13,6 +13,6 @@ RUN jupyter labextension develop . --overwrite
 RUN jupyter server extension enable nb2slide
 RUN jlpm run build 
 
-EXPOSE 8889
+EXPOSE 8889 22
 
 CMD ["jupyter", "lab", "--allow-root","--no-browser", "--ip", "\"*\"", "--notebook-dir", "./resource", "-e", "JUPYTER_TOKEN=\"easythere\"", "--port=8889"]

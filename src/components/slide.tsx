@@ -7,6 +7,7 @@ import '../../style/slideview.css'
 
 import ExamplePrompt from './examplePrompt';
 import EditPanel from './slideComponents/editPanel';
+import SlideImage from './slideComponents/image';
 
 interface IProps {
     index: number,
@@ -23,9 +24,10 @@ interface IProps {
     addSlide: Function,
     modifySlide: Function,
     egpromptSecs: Array<string>,
-    pasteClipboard: Function,
+    pasteClipboard: string,
     getHow: Function,
-    getWhy: Function
+    getWhy: Function,
+    log: Function
 }
 
 function Slide(props: IProps) {
@@ -59,7 +61,14 @@ function Slide(props: IProps) {
     }
 
     const pasteChart = () => {
-        const src = props.pasteClipboard()
+        props.log({
+            actionName: 'paste-output',
+            timestamp: new Date().toUTCString(),
+            oldValue: props.title + ": " + props.subtitles[0],
+            newValue: ''
+        })
+
+        const src = props.pasteClipboard
         if (src.length <= 0) {
             return
         }
@@ -76,17 +85,18 @@ function Slide(props: IProps) {
 
     useEffect(() => {
         let imgList = imgSrcs.map((src) => {
-            return <img
-                src={
-                    src
-                }
-                className='nb-cell-rect'
-                style={{
-                    width: layout == 'row' ? '50%' : '70%',
-                    marginTop: '3px',
-                    marginBottom: '3px'
-                }}
-            ></img>
+            // return <img
+            //     src={
+            //         src
+            //     }
+            //     className='nb-cell-rect'
+            //     style={{
+            //         width: layout == 'row' ? '50%' : '70%',
+            //         marginTop: '3px',
+            //         marginBottom: '3px'
+            //     }}
+            // ></img>
+            return <SlideImage src={src} layout={layout}></SlideImage>
         })
         setImgBlocks(
             <div>
@@ -131,8 +141,13 @@ function Slide(props: IProps) {
                         <Button
                             variant="outline-primary"
                             onClick={() => {
-                                console.log(inputContent.current.value)
                                 try {
+                                    props.log({
+                                        actionName: 'modify-slide',
+                                        timestamp: new Date().toUTCString(),
+                                        oldValue: props.title + subtitle,
+                                        newValue: inputContent.current.value
+                                    })
                                     const parsedResults = parseContent(inputContent.current.value)
                                     props.modifySlide(props.index, props.title, subtitle, parsedResults)
                                     setEditingSubtitle('')
@@ -234,6 +249,7 @@ function Slide(props: IProps) {
                         paste={pasteChart}
                         getWhy={props.getWhy}
                         getHow={props.getHow}
+                        log={props.log}
                     />
                 </div>
             </div>

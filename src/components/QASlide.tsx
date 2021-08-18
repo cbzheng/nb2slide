@@ -8,6 +8,7 @@ interface IProps {
     removeSlide: Function,
     addSlide: Function,
     handleClick: React.MouseEventHandler<HTMLDivElement>,
+    log: Function
 }
 
 function QASlide(props: IProps) {
@@ -31,6 +32,7 @@ function QASlide(props: IProps) {
                         getHow={null}
                         exportSlides={props.exportSlides}
                         paste={() => {}}
+                        log={props.log}
                     ></EditPanel>
                 </div>
             </div>

@@ -21,7 +21,8 @@ interface IProps {
     subtitles: Array<string>,
     paste: Function,
     getWhy: Function,
-    getHow: Function
+    getHow: Function,
+    log: Function
 }
 
 function EditPanel(props: IProps) {
@@ -95,7 +96,14 @@ function EditPanel(props: IProps) {
                         placement='left'
                         overlay={popoverHelp}
                     >
-                        <Button variant="link" style={{ padding: '0' }}>
+                        <Button variant="link" style={{ padding: '0' }} onClick={
+                            () => props.log({
+                                actionName: 'getHelp',
+                                timestamp: new Date().toUTCString(),
+                                oldValue: props.title + props.subtitles[0],
+                                newValue: ''
+                            })
+                        }>
                             <FontAwesomeIcon
                                 className={"edit-icon icon-help"}
                                 icon={faQuestionCircle}
