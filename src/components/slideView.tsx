@@ -26,6 +26,18 @@ interface IProps {
     log: Function
 }
 
+type ExportedSlide = {
+    title: string;
+    subtitles: Array<string>;
+    img: Array<string>
+    points: {
+        [subtitle: string]: Array<string>
+    };
+    eg: boolean
+    startSlide: boolean;
+    endSlide: boolean;
+}
+
 type Action = {
     add: [string, string] | null,
     remove: [string, Array<string>] | null
@@ -49,6 +61,9 @@ function SlideViewer(props: IProps) {
     const [actionStore, setActionStore] = useState([] as Array<Action>)
     const [slideLoaded, setSlideLoaded] = useState(false)
     const [informMsg, setInformMsg] = useState(<></>)
+    const [exportedSlides, setExportedSlides] = useState([] as Array<ExportedSlide>)
+    const author = 'xx'
+    const date = 'xx'
 
     // const pasteClipboard = () => {
     //     return props.clipboard
@@ -126,12 +141,12 @@ function SlideViewer(props: IProps) {
             actionName: 'add-slide',
             timestamp: new Date().toUTCString(),
             oldValue: slideOrder[slideIdx].title + ': ' + slideOrder[slideIdx].subtitles[0],
-            newValue: 'untitle'+order.length.toString()
+            newValue: 'untitle' + order.length.toString()
         })
 
         order.splice(slideIdx, 0, {
             title: slideOrder[slideIdx].title,
-            subtitles: ['untitle'+order.length.toString()],
+            subtitles: ['untitle' + order.length.toString()],
             startSlide: false,
             endSlide: false
         })
@@ -140,11 +155,16 @@ function SlideViewer(props: IProps) {
 
     const exportSlides = async () => {
         const data = JSON.stringify({
-            "slides": {
-                'titles': slideState.templateSectionTitles,
-                'points': slideState.sectionPoints,
-            }
+            'slides': exportedSlides,
+            // "slides": {
+            //     'titles': slideState.templateSectionTitles,
+            //     'points': slideState.sectionPoints,
+            // },
+            'author': author,
+            'date': date,
+            'title': props.title
         })
+        console.log(data)
 
         await downloadFromAPI<any>('export_slides', {
             body: data,
@@ -158,7 +178,6 @@ function SlideViewer(props: IProps) {
     const getOutputImg = (imgs: number[]): string | null => {
         try {
             let cellOutput = null
-            // currently consider only the first one
             // currently consider only the first one
             for (let i = 0; i < imgs.length; i++) {
                 const output = getOutputAreaElements(props.getNBCell(imgs[i]).node).output_arr[0].item(0)
@@ -205,9 +224,21 @@ function SlideViewer(props: IProps) {
     }, [props.slides])
 
     useEffect(() => {
-        console.log(slideOrder)
         let titleFirstSlide = true
         let latestTitle = ''
+        let ex_slides = [] as Array<ExportedSlide>
+        ex_slides = slideOrder.map((slide) => {
+            return {
+                title: slide.title,
+                subtitles: slide.subtitles,
+                img: [],
+                points: {},
+                startSlide: slide.startSlide,
+                endSlide: slide.endSlide,
+                eg: slideState.exampleSubsections.includes(slide.subtitles[0])
+            }
+        })
+
         setSlideDeck(slideOrder.map((slide, index) => {
             if (slide.startSlide) {
                 return <TitleSlide
@@ -251,20 +282,26 @@ function SlideViewer(props: IProps) {
                 const imgs = slideState.sectionImages[title][subtitles[0]]
                 if (imgs) {
                     imgSrc = getOutputImg(imgs)
-                }
-                if (imgSrc) {
-                    console.log('Get img')
+                    ex_slides[index].img.push(imgSrc)
                 }
             }
+
+            // for export
+            subtitles.forEach(subtitle => {
+                ex_slides[index].points[subtitle] = slideState.sectionPoints[title][subtitle]
+            })
             return (
                 <div key={slide.title + slide.subtitles[0]} id={titleFirstSlide ? 'section-' + title : ''}>
 
                     <Slide
+                        exportSlideInfoPasteImg={(src: string) => {
+                            ex_slides[index].img.push(src)
+                        }}
                         pasteClipboard={props.clipboard}
                         index={index}
                         title={title}
                         getWhy={(subtitle: string) => {
-                            return  props.slides.sectionWhy[subtitle]
+                            return props.slides.sectionWhy[subtitle]
                         }}
                         getHow={(subtitle: string) => {
                             return props.slides.sectionHow[subtitle]
@@ -294,6 +331,7 @@ function SlideViewer(props: IProps) {
                 </div>
             )
         }))
+        setExportedSlides(ex_slides)
     }, [slideOrder, slideState, currentTitle, currentSubTitle, props.clipboard])
 
     const modifySlide = (

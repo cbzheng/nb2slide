@@ -10,6 +10,7 @@ import EditPanel from './slideComponents/editPanel';
 // import SlideImage from './slideComponents/image';
 
 interface IProps {
+    exportSlideInfoPasteImg: Function
     index: number,
     title: string,
     subtitles: Array<string>,
@@ -50,7 +51,7 @@ function Slide(props: IProps) {
             if (stns[i].length > 1 && stns[i].slice(0, 1) === '*') {
                 if (!(latestSubtitle in results))
                     results[latestSubtitle] = []
-                results[latestSubtitle].push(stns[i].slice(2))
+                results[latestSubtitle].push(stns[i].slice(1))
             } else {
                 latestSubtitle = stns[i]
                 results[latestSubtitle] = []
@@ -78,8 +79,7 @@ function Slide(props: IProps) {
                 setLayout('column')
         }
         img.src = src
-        // setCopySrc(src)
-        console.log("add images in slides")
+        props.exportSlideInfoPasteImg(src)
         setImgSrcs([...imgSrcs, src])
     }
 
@@ -150,7 +150,7 @@ function Slide(props: IProps) {
                                         newValue: inputContent.current.value
                                     })
                                     const parsedResults = parseContent(inputContent.current.value)
-                                    if (parsedResults && parsedResults.keys.length > 0) {
+                                    if (parsedResults && Object.keys(parsedResults).length > 0) {
                                         props.modifySlide(props.index, props.title, subtitle, parsedResults)
                                         setEditingSubtitle('')
                                     } else {
