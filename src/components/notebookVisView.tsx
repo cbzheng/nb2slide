@@ -13,7 +13,7 @@ interface IProps {
     getNBCell: Function
     slidesMapToCells: { [title: string]: { [subtitle: string]: Array<Array<SlideCellRelation>> } },
     selectedTitle: string,
-    selectedSubTitle: string,
+    selectedSubTitle: Array<string>,
     log: Function
 }
 
@@ -30,19 +30,23 @@ function NotebookVisView(props: IProps) {
         if (props.selectedTitle.length > 0 && props.selectedSubTitle.length > 0) {
             // extract related code cells
             const cellList = props.slidesMapToCells[props.selectedTitle]
-            if (cellList && cellList[props.selectedSubTitle]) {
-                const cells = cellList[props.selectedSubTitle]
-                if (cells.length > 0) {
-                    props.navNBCb(cells[0][0]['cell_idx'])
+            const cellArray = {} as { [cell_idx: number]: SlideCellRelation }
+            props.selectedSubTitle.forEach((subtitle) => {
+                if (cellList && cellList[subtitle]) {
+                    const cells = cellList[subtitle]
+                    if (cells.length > 0) {
+                        props.navNBCb(cells[0][0]['cell_idx'])
+                    }
+                    cells.forEach(cArray => {
+                        if (!(cArray[0]['cell_idx'] in cellArray)) {
+                            cellArray[cArray[0]['cell_idx']] = cArray[0]
+                        }
+                    })
                 }
-                const cellArray = {} as { [cell_idx: number]: SlideCellRelation }
-                cells.forEach(cArray => {
-                    cellArray[cArray[0]['cell_idx']] = cArray[0]
-                })
-                setCurrentRelatedCells(cellArray)
-            } else {
-                setCurrentRelatedCells({})
-            }
+            })
+            setCurrentRelatedCells(cellArray)
+        } else {
+            setCurrentRelatedCells({})
         }
     }, [props.slidesMapToCells, props.selectedTitle, props.selectedSubTitle])
 
@@ -166,7 +170,7 @@ function NotebookVisView(props: IProps) {
                             cursor: 'pointer'
                         }}
                         onClick={() => {
-                            const action = cellData.index in currentRelatedCells? 'color-cell-nav': 'code-cell-nav'
+                            const action = cellData.index in currentRelatedCells ? 'color-cell-nav' : 'code-cell-nav'
                             props.log({
                                 actionName: action,
                                 timestamp: new Date().toUTCString(),

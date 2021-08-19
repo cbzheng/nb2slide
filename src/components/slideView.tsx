@@ -56,6 +56,7 @@ function SlideViewer(props: IProps) {
     const [updateHierarchySignal, setUpdateHierarchySignal] = useState(0)
     const [currentTitle, setCurrentTitle] = useState("")
     const [currentSubTitle, setCurrentSubTitle] = useState("")
+    const [currentSubtitles, setCurrentSubtitles] = useState([] as Array<string>)
     const [slideOverviewHide, setSlideOverviewHide] = useState(false)
     const hierarchyTitleRefs = useRef([])
     const [actionStore, setActionStore] = useState([] as Array<Action>)
@@ -316,10 +317,12 @@ function SlideViewer(props: IProps) {
                                 if (subtitles.includes(currentSubTitle))
                                     return
                                 setCurrentSubTitle(subtitles[0])
+                                setCurrentSubtitles(subtitles)
                                 return
                             }
                             setCurrentTitle(title)
                             setCurrentSubTitle(subtitles[0])
+                            setCurrentSubtitles(subtitles)
                             hierarchyTitleRefs.current[slideState.sectionTitles.indexOf(title)].click();
                         }}
                         exportSlides={exportSlides}
@@ -388,7 +391,7 @@ function SlideViewer(props: IProps) {
                                 getNBCell={props.getNBCell}
                                 slidesMapToCells={slideState.sectionCodeCells}
                                 selectedTitle={currentTitle}
-                                selectedSubTitle={currentSubTitle}
+                                selectedSubTitle={currentSubtitles}
                                 log={props.log}
                             />
                         </div>

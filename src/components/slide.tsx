@@ -153,7 +153,11 @@ function Slide(props: IProps) {
                                     if (parsedResults && Object.keys(parsedResults).length > 0) {
                                         props.modifySlide(props.index, props.title, subtitle, parsedResults)
                                         setEditingSubtitle('')
-                                    } else {
+                                    } else if (parsedResults && Object.keys(parsedResults).length == 0) {
+                                        props.modifySlide(props.index, props.title, subtitle, {" ": {}})
+                                        setEditingSubtitle('')
+                                    } 
+                                    else {
                                         alert('Not valide input, check the User Guide, example:\nsubtitle1\n*oint1\n*point2')
                                     }
                                 } catch (Error) {
