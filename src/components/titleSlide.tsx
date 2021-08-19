@@ -13,6 +13,9 @@ interface IProps {
 }
 
 function TitleSlide(props: IProps) {
+    let dt = new Date();
+    const date = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
+
     return (
         <>
             <div
@@ -32,9 +35,9 @@ function TitleSlide(props: IProps) {
                                 top: '5rem'
                             }}
                         >
-                            <div>Author:
+                            <div>Author: Anonymouse
                             </div>
-                            <div>Date:</div>
+                            <div>Date: {date}</div>
                         </div>
                     </div>
                     <EditPanel
