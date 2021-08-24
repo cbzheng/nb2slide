@@ -343,6 +343,9 @@ function SlideViewer(props: IProps) {
         oldSubtitle: string,
         newContent: { [subtitle: string]: Array<string> }
     ) => {
+
+        // update the slides order and state
+        console.log('modify slides content')
         const order = [...slideOrder]
         let state = { ...slideState }
         const slideStructure = order[slideIdx]
@@ -352,12 +355,13 @@ function SlideViewer(props: IProps) {
         } else {
             index = 0
         }
-        const titlePoints = state.sectionPoints[title]
-
-        Object.keys(newContent).forEach((subtitle, i) => {
-            slideStructure.subtitles.splice(index + i, 0, subtitle)
-            titlePoints[subtitle] = newContent[subtitle]
-        })
+        const keylength = Object.keys(newContent).length
+        if (keylength !== 0) {
+            Object.keys(newContent).forEach((subtitle, i) => {
+                slideStructure.subtitles.splice(index + i, 0, subtitle)
+                state.sectionPoints[title][subtitle] = newContent[subtitle]
+            })
+        }
 
         if (state.exampleSubsections.includes(oldSubtitle)) {
             let i = state.exampleSubsections.findIndex((c) => c === oldSubtitle)

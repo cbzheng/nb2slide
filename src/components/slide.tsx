@@ -38,6 +38,7 @@ function Slide(props: IProps) {
     const [imgSrcs, setImgSrcs] = useState([] as Array<string>)
     const [imgBlocks, setImgBlocks] = useState(<></>)
     const [containEg, setContainEg] = useState(false)
+    const [isModified, setModified] = useState(false)
     const [editingSubtitle, setEditingSubtitle] = useState('')
     const inputContent = useRef(null);
 
@@ -52,7 +53,7 @@ function Slide(props: IProps) {
                 if (!(latestSubtitle in results))
                     results[latestSubtitle] = []
                 results[latestSubtitle].push(stns[i].slice(1))
-            } else {
+            } else if(stns[i].length > 0) {
                 latestSubtitle = stns[i]
                 results[latestSubtitle] = []
             }
@@ -153,9 +154,12 @@ function Slide(props: IProps) {
                                     if (parsedResults && Object.keys(parsedResults).length > 0) {
                                         props.modifySlide(props.index, props.title, subtitle, parsedResults)
                                         setEditingSubtitle('')
+                                        setModified(true)
                                     } else if (parsedResults && Object.keys(parsedResults).length == 0) {
-                                        props.modifySlide(props.index, props.title, subtitle, {" ": {}})
+                                        props.modifySlide(props.index, props.title, subtitle, {})
                                         setEditingSubtitle('')
+                                        setModified(true)
+
                                     } 
                                     else {
                                         alert('Not valide input, check the User Guide, example:\nsubtitle1\n*oint1\n*point2')
@@ -229,7 +233,8 @@ function Slide(props: IProps) {
                     <div
                         className='status-circle'
                         style={{
-                            backgroundColor: containEg ? '#feb24c' : '#2c7fb8'
+                            backgroundColor: containEg ? '#feb24c' : '#2c7fb8',
+                            visibility: isModified? 'hidden': 'visible'
                         }}
                     ></div>
                     <h2>{props.title}</h2>
@@ -259,6 +264,22 @@ function Slide(props: IProps) {
                         getWhy={props.getWhy}
                         getHow={props.getHow}
                         log={props.log}
+                        showHelp={
+                            (() => {
+                                let isShowHelp = false
+                                props.subtitles.forEach(subtitle => {
+                                    const why = props.getWhy(subtitle)
+                                    const how = props.getHow(subtitle)
+                                    if (why && why !== undefined) {
+                                        isShowHelp = true
+                                    }
+                                    if (how && how !== undefined) {
+                                        isShowHelp = true
+                                    }
+                                })
+                                return isShowHelp
+                            })() as boolean
+                        }
                     />
                 </div>
             </div>

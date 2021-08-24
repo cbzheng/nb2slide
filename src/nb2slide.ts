@@ -47,27 +47,27 @@ class OutputCatchBtnExtension implements DocumentRegistry.IWidgetExtension<Noteb
     }
 }
 
-class CellBindingBtnExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-    onclick: () => void
+// class CellBindingBtnExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+//     onclick: () => void
 
-    constructor(onclick: () => void) {
-        this.onclick = onclick
-    }
+//     constructor(onclick: () => void) {
+//         this.onclick = onclick
+//     }
 
-    createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
-        let button = new ToolbarButton({
-            className: 'cellBinding',
-            iconClass: 'fas fa-link',
-            onClick: this.onclick,
-            tooltip: 'Bind the current code cell with the current selected slide'
-        });
+//     createNew(panel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>): IDisposable {
+//         let button = new ToolbarButton({
+//             className: 'cellBinding',
+//             iconClass: 'fas fa-link',
+//             onClick: this.onclick,
+//             tooltip: 'Bind the current code cell with the current selected slide'
+//         });
 
-        panel.toolbar.insertItem(0, 'cellBinding', button);
-        return new DisposableDelegate(() => {
-            button.dispose();
-        });
-    }
-}
+//         panel.toolbar.insertItem(0, 'cellBinding', button);
+//         return new DisposableDelegate(() => {
+//             button.dispose();
+//         });
+//     }
+// }
 
 export class NB2Slide {
     app: JupyterFrontEnd;
@@ -113,16 +113,16 @@ export class NB2Slide {
         const { commands } = this.app;
         this.command = 'jlab-examples:command-palette';
 
-        const bindOnClick = () => {
-            if (this.cellsIndex === undefined) {
-                alert('You should start the NB2Slide widget to use this function')
-                return
-            }
-            const cellIdx = this.notebookTools.activeNotebookPanel.content.activeCellIndex
-            this.widgetContent.setBindCellIdx(cellIdx)
-            this.widgetContent.update()
-            this.widget.update()
-        }
+        // const bindOnClick = () => {
+        //     if (this.cellsIndex === undefined) {
+        //         alert('You should start the NB2Slide widget to use this function')
+        //         return
+        //     }
+        //     const cellIdx = this.notebookTools.activeNotebookPanel.content.activeCellIndex
+        //     this.widgetContent.setBindCellIdx(cellIdx)
+        //     this.widgetContent.update()
+        //     this.widget.update()
+        // }
 
         const copyOutputOnClick = () => {
             if (this.cellsIndex === undefined) {
@@ -144,7 +144,7 @@ export class NB2Slide {
         }
 
         this.app.docRegistry.addWidgetExtension('Notebook', new OutputCatchBtnExtension(copyOutputOnClick));
-        this.app.docRegistry.addWidgetExtension('Notebook', new CellBindingBtnExtension(bindOnClick));
+        // this.app.docRegistry.addWidgetExtension('Notebook', new CellBindingBtnExtension(bindOnClick));
 
         // Add a command
         commands.addCommand(this.command, {

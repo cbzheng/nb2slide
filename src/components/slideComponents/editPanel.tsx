@@ -7,13 +7,14 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react';
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Button, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 import '../../../style/slideview.css'
 // import ExportPopover from './exportPopover';
 import { CopyBlock, atomOneLight } from 'react-code-blocks'
 
 
 interface IProps {
+    showHelp: boolean,
     exportSlides: Function,
     addSlide: Function,
     removeSlide: Function,
@@ -30,9 +31,6 @@ function EditPanel(props: IProps) {
     const popoverExport = <Popover id="popover-export">
         <Popover.Header as="h3">Export Slides</Popover.Header>
         <Popover.Body style={{ display: 'flex', flexDirection: 'column' }}>
-            <Button variant="outline-primary" style={{ marginBottom: '0.5rem' }}>
-                Export Single Slide
-            </Button>
             <Button variant="outline-primary" onClick={() => { props.exportSlides() }}>
                 Export All Slides
             </Button>
@@ -64,7 +62,7 @@ function EditPanel(props: IProps) {
                             text={how.code}
                             language={'python'}
                             wrapLines
-                            theme={	atomOneLight}
+                            theme={atomOneLight}
                         /> :
                         null
                     }
@@ -89,13 +87,14 @@ function EditPanel(props: IProps) {
     return (
         <div className={'edit-icon-list'} onClick={(e) => { e.stopPropagation() }}>
             <div id='edit-panel'>
-                <div>
+                {props.showHelp? <div>
                     <OverlayTrigger
                         trigger='click'
                         key='export'
                         placement='left'
                         overlay={popoverHelp}
                     >
+
                         <Button variant="link" style={{ padding: '0' }} onClick={
                             () => props.log({
                                 actionName: 'getHelp',
@@ -110,33 +109,63 @@ function EditPanel(props: IProps) {
                             />
                         </Button>
                     </OverlayTrigger>
+                </div>: <></> }
+                <div>
+                    <OverlayTrigger
+                        key={'left-paste'}
+                        placement={'left'}
+                        overlay={
+                            <Tooltip id={`tooltip-paste`}>
+                                Paste Output
+                            </Tooltip>
+                        }
+                    >
+                        <Button variant="link" style={{ padding: '0' }}>
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-add"}
+                                icon={faClipboard}
+                                onClick={() => { props.paste() }}
+                            />
+                        </Button>
+                    </OverlayTrigger>
                 </div>
                 <div>
-                    <Button variant="link" style={{ padding: '0' }}>
-                        <FontAwesomeIcon
-                            className={"edit-icon icon-add"}
-                            icon={faClipboard}
-                            onClick={() => { props.paste() }}
-                        />
-                    </Button>
+                    <OverlayTrigger
+                        key={'left-add'}
+                        placement={'left'}
+                        overlay={
+                            <Tooltip id={`tooltip-add`}>
+                                Add a new slide
+                            </Tooltip>
+                        }
+                    >
+                        <Button variant="link" style={{ padding: '0' }}>
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-add"}
+                                icon={faPlusSquare}
+                                onClick={() => props.addSlide()}
+                            />
+                        </Button>
+                    </OverlayTrigger>
                 </div>
                 <div>
-                    <Button variant="link" style={{ padding: '0' }}>
-                        <FontAwesomeIcon
-                            className={"edit-icon icon-add"}
-                            icon={faPlusSquare}
-                            onClick={() => props.addSlide()}
-                        />
-                    </Button>
-                </div>
-                <div>
-                    <Button variant="link" style={{ padding: '0' }}>
-                        <FontAwesomeIcon
-                            className={"edit-icon icon-minus"}
-                            icon={faMinusSquare}
-                            onClick={() => props.removeSlide()}
-                        />
-                    </Button>
+                    <OverlayTrigger
+                        key={'left-remove'}
+                        placement={'left'}
+                        overlay={
+                            <Tooltip id={`tooltip-remove`}>
+                                Remove the slide
+                            </Tooltip>
+                        }
+                    >
+                        <Button variant="link" style={{ padding: '0' }}>
+                            <FontAwesomeIcon
+                                className={"edit-icon icon-minus"}
+                                icon={faMinusSquare}
+                                onClick={() => props.removeSlide()}
+                            />
+                        </Button>
+                    </OverlayTrigger>
                 </div>
                 <div>
                     <OverlayTrigger

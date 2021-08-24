@@ -33,6 +33,7 @@ function QASlide(props: IProps) {
                         exportSlides={props.exportSlides}
                         paste={() => {}}
                         log={props.log}
+                        showHelp={false}
                     ></EditPanel>
                 </div>
             </div>

@@ -5,3 +5,7 @@
 .cellBinding.jp-Button.minimal .jp-Icon {
     color: darkslategray;
 }
+
+.nb2slide-Widget {
+    min-width: 50vw !important;    
+}

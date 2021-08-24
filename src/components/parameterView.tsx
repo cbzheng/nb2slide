@@ -69,7 +69,7 @@ function ParameterView(props: IProps) {
                         }}
                     >
                         <Row>
-                            <FormLabel column lg={3}>
+                            <FormLabel column lg={4}>
                                 Slides Title
                             </FormLabel>
                             <Col>
@@ -81,7 +81,53 @@ function ParameterView(props: IProps) {
                                 />
                             </Col>
                         </Row>
-                        <div className='slider-question-lable'>Audience Background</div>
+                        <Row>
+                            <FormLabel column lg={4}>
+                                Audience Background
+                            </FormLabel>
+                            <Col>
+                                <div style={{display: 'flex', flexDirection: 'row'}}>
+                                    <span className='slider-label-left'>Less Technical</span>
+                                    <Slider
+                                        step={1}
+                                        min={0} max={1}
+                                        value={audience}
+                                        onChange={(v) => {
+                                            setAudience(v)
+                                        }}
+                                        style={{
+                                            width: '4rem',
+                                            paddingTop: '1rem'
+                                        }}
+                                    />
+                                    <span className='slider-label-right'>More Technical</span>
+                                </div>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <FormLabel column lg={4}>
+                                Level of Details
+                            </FormLabel>
+                            <Col>
+                                <div style={{display: 'flex', flexDirection: 'row'}}>
+                                    <span className='slider-label-left'>Low</span>
+                                    <Slider
+                                        step={1}
+                                        min={0} max={1}
+                                        value={detailLevel}
+                                        onChange={(v) => {
+                                            setDetailLevel(v)
+                                        }}
+                                        style={{
+                                            width: '4rem',
+                                            paddingTop: '1rem'
+                                        }}
+                                    />
+                                    <span className='slider-label-right'>High</span>
+                                </div>
+                            </Col>
+                        </Row>
+                        {/* <div className='slider-question-lable'>Audience Background</div>
                         <div className='slider-question'>
                             <span className='slider-label-left'>Less Technical</span>
                             <Slider
@@ -92,7 +138,7 @@ function ParameterView(props: IProps) {
                                     setAudience(v)
                                 }}
                                 style={{
-                                    width: '40%',
+                                    width: '4rem',
                                     paddingTop: '1rem'
                                 }}
                             />
@@ -103,18 +149,18 @@ function ParameterView(props: IProps) {
                             <span className='slider-label-left'>Low</span>
                             <Slider
                                 step={1}
-                                min={0} max={2}
+                                min={0} max={1}
                                 value={detailLevel}
                                 onChange={(v) => {
                                     setDetailLevel(v)
                                 }}
                                 style={{
-                                    width: '40%',
+                                    width: '4rem',
                                     paddingTop: '1rem'
                                 }}
                             />
                             <span className='slider-label-right'>High</span>
-                        </div>
+                        </div> */}
                     </Card.Body>
                 </Card>
                 <Button onClick={generate} >
