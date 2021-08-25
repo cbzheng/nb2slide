@@ -29,7 +29,8 @@ interface IProps {
     pasteClipboard: string,
     getHow: Function,
     getWhy: Function,
-    log: Function
+    log: Function,
+    status: string
 }
 
 function Slide(props: IProps) {
@@ -38,8 +39,6 @@ function Slide(props: IProps) {
     // const [copySrc, setCopySrc] = useState(null as string | null)
     const [imgSrcs, setImgSrcs] = useState([] as Array<string>)
     const [imgBlocks, setImgBlocks] = useState(<></>)
-    const [containEg, setContainEg] = useState(false)
-    const [isModified, setModified] = useState(false)
     const [editingSubtitle, setEditingSubtitle] = useState('')
     const [titleDiv, setTitleDiv] = useState(<></>)
     const [editTitle, setEditTitle] = useState(false)
@@ -206,12 +205,9 @@ function Slide(props: IProps) {
                                     if (parsedResults && Object.keys(parsedResults).length > 0) {
                                         props.modifySlide(props.index, props.title, subtitle, parsedResults)
                                         setEditingSubtitle('')
-                                        setModified(true)
                                     } else if (parsedResults && Object.keys(parsedResults).length == 0) {
                                         props.modifySlide(props.index, props.title, subtitle, {})
                                         setEditingSubtitle('')
-                                        setModified(true)
-
                                     }
                                     else {
                                         alert('Not valide input, check the User Guide, example:\nsubtitle1\n*oint1\n*point2')
@@ -233,7 +229,6 @@ function Slide(props: IProps) {
                 )
             } else {
                 const egOrNot = props.egpromptSecs.includes(subtitle)
-                setContainEg(egOrNot)
                 if (egOrNot) {
                     content = <ExamplePrompt points={props.points[subtitle]}></ExamplePrompt>
                 } else {
@@ -282,13 +277,16 @@ function Slide(props: IProps) {
                 className={props.select ? "sl-box sl-current-box" : "sl-box"}
             >
                 <div className={"slide"}>
-                    <div
-                        className='status-circle'
-                        style={{
-                            backgroundColor: containEg ? '#feb24c' : '#2c7fb8',
-                            visibility: isModified ? 'hidden' : 'visible'
-                        }}
-                    ></div>
+                    <div className='status-slide' style={{display: 'flex', flexDirection: 'row'}}>
+                        <div
+                            className='status-circle'
+                            style={{
+                                backgroundColor: props.status === 'eg' ? '#feb24c' : '#2c7fb8',
+                                visibility: props.status === 'modify' ? 'hidden' : 'visible'
+                            }}
+                        ></div>
+                        {props.status === 'eg' ? <span className='sample-content'>SAMPLE CONTENT</span>: null}
+                    </div>
                     <h2>{titleDiv}</h2>
                     <div
                         style={{

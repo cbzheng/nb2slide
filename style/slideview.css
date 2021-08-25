@@ -305,13 +305,21 @@
   transition: opacity 300ms ease-in;
 }
 
+.status-slide {
+  right: 2rem;
+  top: 2rem;
+  position: absolute;
+}
+
 .status-circle {
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  right: 2rem;
-  top: 2rem;
-  position: absolute;
+  margin-right: 0.5rem;
+}
+
+.sample-content {
+  color: gray;
 }
 
 .parameter-row {

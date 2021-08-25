@@ -51,6 +51,7 @@ function SlideViewer(props: IProps) {
         subtitles: Array<string>;
         startSlide: boolean;
         endSlide: boolean;
+        status: string;
     }>)
     // const [slideIndexMap, setSlideIndexMap] = useState({} as {[tidx: string]: {[sidx: string]: number}})
     const [slideDeck, setSlideDeck] = useState([<></>])
@@ -70,6 +71,10 @@ function SlideViewer(props: IProps) {
     // const pasteClipboard = () => {
     //     return props.clipboard
     // }
+
+    useEffect(() => {
+        console.log('exported slides')
+    }, [exportedSlides])
 
     useEffect(() => {
         if (props.bindCellIdx < 0) {
@@ -126,6 +131,8 @@ function SlideViewer(props: IProps) {
 
         let order = [...slideOrder]
         order.splice(slideIdx, 1)
+
+        exportedSlides.splice(slideIdx, 1)
         setSlideOrder(order)
     }
 
@@ -150,7 +157,18 @@ function SlideViewer(props: IProps) {
             title: slideOrder[slideIdx].title,
             subtitles: ['untitle' + order.length.toString()],
             startSlide: false,
-            endSlide: false
+            endSlide: false,
+            status: 'modify'
+        })
+
+        exportedSlides.splice(slideIdx, 0,  {
+            title: slideOrder[slideIdx].title,
+            subtitles: ['untitle' + (order.length-1).toString()],
+            img: [],
+            points: {},
+            startSlide: false,
+            endSlide: false,
+            eg: false
         })
         setSlideOrder(order)
     }
@@ -158,10 +176,6 @@ function SlideViewer(props: IProps) {
     const exportSlides = async () => {
         const data = JSON.stringify({
             'slides': exportedSlides,
-            // "slides": {
-            //     'titles': slideState.templateSectionTitles,
-            //     'points': slideState.sectionPoints,
-            // },
             'author': props.author,
             'date': date,
             'title': props.title
@@ -199,7 +213,33 @@ function SlideViewer(props: IProps) {
     }
 
     useEffect(() => {
-        setSlideOrder(props.slides.slidesOrder.slice())
+        // setSlideOrder(props.slides.slidesOrder.slice())
+        const order = [] as Array<{
+            title: string;
+            subtitles: Array<string>;
+            startSlide: boolean;
+            endSlide: boolean;
+            status: string;
+        }>
+        props.slides.slidesOrder.forEach(slide => {
+            let isEG = false;
+            if (slide.title in props.slides.slidesContent
+                && props.slides.slidesContent[slide.title].egprompt
+                && slide.subtitles.length > 0
+                && props.slides.slidesContent[slide.title].egprompt.includes(slide.subtitles[0])) {
+                isEG = true
+            }
+            order.push({
+                title: slide.title,
+                subtitles: slide.subtitles,
+                startSlide: slide.startSlide,
+                endSlide: slide.endSlide,
+                status: isEG ? 'eg' : 'auto'
+            })
+        })
+        setSlideOrder(order)
+
+
         let state = slideReducerInitialState
         state.sectionTitles = []
         state.exampleSubsections = []
@@ -229,11 +269,11 @@ function SlideViewer(props: IProps) {
         let titleFirstSlide = true
         let latestTitle = ''
         let ex_slides = [] as Array<ExportedSlide>
-        ex_slides = slideOrder.map((slide) => {
+        ex_slides = slideOrder.map((slide, index) => {
             return {
                 title: slide.title,
                 subtitles: slide.subtitles,
-                img: [],
+                img: exportedSlides.length > 0 && exportedSlides[index] !== undefined? exportedSlides[index].img: [],
                 points: {},
                 startSlide: slide.startSlide,
                 endSlide: slide.endSlide,
@@ -298,7 +338,9 @@ function SlideViewer(props: IProps) {
 
                     <Slide
                         exportSlideInfoPasteImg={(src: string) => {
-                            ex_slides[index].img.push(src)
+                            
+                            exportedSlides[index].img.push(src)
+                            // setExportedSlides(exs)
                         }}
                         pasteClipboard={props.clipboard}
                         index={index}
@@ -333,6 +375,7 @@ function SlideViewer(props: IProps) {
                         modifySlide={modifySlide}
                         modifySlideTitle={modifySlideTitle}
                         log={props.log}
+                        status={slide.status}
                     />
                 </div>
             )
@@ -344,7 +387,7 @@ function SlideViewer(props: IProps) {
         slideIdx: number,
         newTitle: string,
         oldTitle: string,
-        content: {[subtitle: string]: Array<string>}
+        content: { [subtitle: string]: Array<string> }
     ) => {
         console.log('modify slide title!')
         const order = [...slideOrder]
@@ -374,6 +417,7 @@ function SlideViewer(props: IProps) {
         const order = [...slideOrder]
         let state = { ...slideState }
         const slideStructure = order[slideIdx]
+        slideStructure.status = 'modify'
         let index = slideStructure.subtitles.findIndex((c) => c === oldSubtitle)
         if (index >= 0) {
             slideStructure.subtitles.splice(index, 1)
