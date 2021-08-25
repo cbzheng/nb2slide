@@ -313,3 +313,7 @@
   top: 2rem;
   position: absolute;
 }
+
+.parameter-row {
+  margin-bottom: 0.5rem;
+}

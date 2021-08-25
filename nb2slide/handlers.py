@@ -87,8 +87,8 @@ def generateSlides(input_data):
     # requests_log.setLevel(logging.DEBUG)
     # requests_log.propagate = True
 
-    url = "http://0.0.0.0:8080/nbupload"
-    # url = "http://106.14.60.29:8080/nbupload"
+    # url = "http://0.0.0.0:8080/nbupload"
+    url = "http://106.14.144.191:8080/nbupload"
     data = input_data
     x = requests.post(url, json=data)
     return x
@@ -107,8 +107,8 @@ def logBehavior(input_data):
     # requests_log = logging.getLogger("requests.packages.urllib3")
     # requests_log.setLevel(logging.DEBUG)
     # requests_log.propagate = True
-    url = "http://0.0.0.0:8080/log"
-    # url = "http://106.14.60.29:8080/log"
+    # url = "http://0.0.0.0:8080/log"
+    url = "http://106.14.144.191:8080/log"
     data = input_data
     x = requests.post(url, json=data)
 
@@ -125,8 +125,8 @@ def exportSlides(input_data):
     requests_log = logging.getLogger("requests.packages.urllib3")
     requests_log.setLevel(logging.DEBUG)
     requests_log.propagate = True 
-    url = "http://0.0.0.0:8080/slidesexport"
-    # url = "http://106.14.60.29:8080/slidesexport"
+    # url = "http://0.0.0.0:8080/slidesexport"
+    url = "http://106.14.144.191:8080/slidesexport"
     data = input_data
     x = requests.post(url, json=data)
     return x

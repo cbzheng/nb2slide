@@ -20,6 +20,7 @@ interface IProps {
     cells: Array<StaticNotebookCell>,
     navNBCb: Function,
     getNBCell: Function,
+    author: string,
     title: string,
     clipboard: string,
     bindCellIdx: number,
@@ -63,8 +64,8 @@ function SlideViewer(props: IProps) {
     const [slideLoaded, setSlideLoaded] = useState(false)
     const [informMsg, setInformMsg] = useState(<></>)
     const [exportedSlides, setExportedSlides] = useState([] as Array<ExportedSlide>)
-    const author = 'xx'
-    const date = 'xx'
+    let dt = new Date();
+    const date = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
 
     // const pasteClipboard = () => {
     //     return props.clipboard
@@ -161,7 +162,7 @@ function SlideViewer(props: IProps) {
             //     'titles': slideState.templateSectionTitles,
             //     'points': slideState.sectionPoints,
             // },
-            'author': author,
+            'author': props.author,
             'date': date,
             'title': props.title
         })
@@ -243,6 +244,7 @@ function SlideViewer(props: IProps) {
         setSlideDeck(slideOrder.map((slide, index) => {
             if (slide.startSlide) {
                 return <TitleSlide
+                    author={props.author}
                     title={props.title}
                     select={currentTitle === 'slides-title'}
                     handleClick={() => {
@@ -329,6 +331,7 @@ function SlideViewer(props: IProps) {
                         removeSlide={removeSlide}
                         addSlide={addSlide}
                         modifySlide={modifySlide}
+                        modifySlideTitle={modifySlideTitle}
                         log={props.log}
                     />
                 </div>
@@ -336,6 +339,28 @@ function SlideViewer(props: IProps) {
         }))
         setExportedSlides(ex_slides)
     }, [slideOrder, slideState, currentTitle, currentSubTitle, props.clipboard])
+
+    const modifySlideTitle = (
+        slideIdx: number,
+        newTitle: string,
+        oldTitle: string,
+        content: {[subtitle: string]: Array<string>}
+    ) => {
+        console.log('modify slide title!')
+        const order = [...slideOrder]
+        let state = { ...slideState }
+        const slideStructure = order[slideIdx]
+        slideStructure.title = newTitle
+        if (newTitle in state.sectionPoints) {
+            state.sectionPoints[newTitle] = Object.assign(state.sectionPoints[newTitle], content)
+        } else {
+            state.sectionPoints[newTitle] = content
+            state.sectionImages[newTitle] = {}
+            state.sectionCodeCells[newTitle] = {}
+        }
+        setSlideOrder(order)
+        setSlideState(state)
+    }
 
     const modifySlide = (
         slideIdx: number,
@@ -380,7 +405,7 @@ function SlideViewer(props: IProps) {
                     <div
                         id='explore-view'
                         style={{
-                            width: slideOverviewHide ? '20%' : '40%'
+                            width: slideOverviewHide ? '20%' : '30%'
                         }}
                     >
                         <div
@@ -420,7 +445,7 @@ function SlideViewer(props: IProps) {
                     <div
                         id={"slideview"}
                         style={{
-                            width: slideOverviewHide ? '80%' : '60%'
+                            width: slideOverviewHide ? '80%' : '70%'
                         }}
                     >
                         <div id={"slide-deck"}>

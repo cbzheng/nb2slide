@@ -9,7 +9,8 @@ interface IProps {
     addSlide: Function,
     handleClick: React.MouseEventHandler<HTMLDivElement>,
     title: string,
-    log: Function
+    log: Function,
+    author: string
 }
 
 function TitleSlide(props: IProps) {
@@ -35,7 +36,7 @@ function TitleSlide(props: IProps) {
                                 top: '5rem'
                             }}
                         >
-                            <div>Author: Anonymouse
+                            <div>Author: {props.author}
                             </div>
                             <div>Date: {date}</div>
                         </div>

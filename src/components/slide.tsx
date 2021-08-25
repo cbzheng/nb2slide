@@ -24,6 +24,7 @@ interface IProps {
     removeSlide: Function,
     addSlide: Function,
     modifySlide: Function,
+    modifySlideTitle: Function,
     egpromptSecs: Array<string>,
     pasteClipboard: string,
     getHow: Function,
@@ -40,7 +41,10 @@ function Slide(props: IProps) {
     const [containEg, setContainEg] = useState(false)
     const [isModified, setModified] = useState(false)
     const [editingSubtitle, setEditingSubtitle] = useState('')
+    const [titleDiv, setTitleDiv] = useState(<></>)
+    const [editTitle, setEditTitle] = useState(false)
     const inputContent = useRef(null);
+    const inputTitle = useRef(null)
 
     const parseContent = (content: string) => {
         const stns = content.split('\n')
@@ -53,7 +57,7 @@ function Slide(props: IProps) {
                 if (!(latestSubtitle in results))
                     results[latestSubtitle] = []
                 results[latestSubtitle].push(stns[i].slice(1))
-            } else if(stns[i].length > 0) {
+            } else if (stns[i].length > 0) {
                 latestSubtitle = stns[i]
                 results[latestSubtitle] = []
             }
@@ -121,6 +125,54 @@ function Slide(props: IProps) {
     }, [props.cellOutput])
 
     useEffect(() => {
+        if (editTitle) {
+            setTitleDiv(
+                <div>
+                    <FormControl
+                        type='text'
+                        ref={inputTitle}
+                        defaultValue={props.title}
+                    />
+                    <Button
+                        variant="outline-primary"
+                        onClick={() => {
+                            if (props.title !== inputTitle.current.value) {
+                                props.modifySlideTitle(
+                                    props.index,
+                                    inputTitle.current.value,
+                                    props.title,
+                                    props.points
+                                )
+                            }
+                            setEditTitle(false)
+                        }}
+                    >
+                        OK
+                    </Button>
+                    <Button
+                        variant="outline-primary"
+                        onClick={() => {
+                            setEditTitle(false)
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </div>
+            )
+        } else {
+            setTitleDiv(
+                <span
+                    onDoubleClick={() => {
+                        setEditTitle(true)
+                    }}
+                >
+                    {props.title}
+                </span>
+            )
+        }
+    }, [props.title, editTitle])
+
+    useEffect(() => {
         setSubsectionList(props.subtitles.map(subtitle => {
             let content = <></>
 
@@ -160,7 +212,7 @@ function Slide(props: IProps) {
                                         setEditingSubtitle('')
                                         setModified(true)
 
-                                    } 
+                                    }
                                     else {
                                         alert('Not valide input, check the User Guide, example:\nsubtitle1\n*oint1\n*point2')
                                     }
@@ -234,10 +286,10 @@ function Slide(props: IProps) {
                         className='status-circle'
                         style={{
                             backgroundColor: containEg ? '#feb24c' : '#2c7fb8',
-                            visibility: isModified? 'hidden': 'visible'
+                            visibility: isModified ? 'hidden' : 'visible'
                         }}
                     ></div>
-                    <h2>{props.title}</h2>
+                    <h2>{titleDiv}</h2>
                     <div
                         style={{
                             display: 'flex',

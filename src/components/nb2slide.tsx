@@ -60,6 +60,7 @@ class Logger {
 function NB2Slide(props: IProps) {
     const [slides, setSlides] = useState({} as SlideAPIInfo)
     const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
     const [mode, setMode] = useState('parameter')
     const logger = new Logger()
     logger.SendLogs()
@@ -67,13 +68,15 @@ function NB2Slide(props: IProps) {
     const updateNotebookInfo = async (
         audience: number,
         detailLevel: number,
+        author: string,
         title: string
     ) => {
         setTitle(title)
+        setAuthor(author)
         const data = JSON.stringify({
             "notebook": props.notebookCells,
             "audience": audience,
-            "detailLevel": detailLevel
+            "detailLevel": detailLevel,
         })
 
         // if (audience === 0) {
@@ -128,6 +131,7 @@ function NB2Slide(props: IProps) {
                             navNBCb={props.navNBCb}
                             getNBCell={props.getNBCell}
                             title={title}
+                            author={author}
                             clipboard={props.clipboard}
                             bindCellIdx={props.bindCellIdx}
                             log={logger.AddLogItem}

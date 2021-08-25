@@ -15,6 +15,7 @@ function ParameterView(props: IProps) {
     const [audience, setAudience] = useState(0)
     const [detailLevel, setDetailLevel] = useState(0)
     const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
     const [submit, setSubmit] = useState(false)
 
     const generate = () => {
@@ -39,7 +40,7 @@ function ParameterView(props: IProps) {
             newValue: title
         })
 
-        props.generateSlides(audience, detailLevel, title).then(() => {
+        props.generateSlides(audience, detailLevel, author, title).then(() => {
             props.afterGenerate()
         })
         setSubmit(true)
@@ -68,7 +69,7 @@ function ParameterView(props: IProps) {
                             padding: '1rem',
                         }}
                     >
-                        <Row>
+                        <Row className='parameter-row'>
                             <FormLabel column lg={4}>
                                 Slides Title
                             </FormLabel>
@@ -77,11 +78,24 @@ function ParameterView(props: IProps) {
                                     type="text"
                                     value={title}
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setTitle(e.target.value) }}
-                                    placeholder="what is the title of the slides?"
+                                    placeholder=""
                                 />
                             </Col>
                         </Row>
-                        <Row>
+                        <Row className='parameter-row'>
+                            <FormLabel column lg={4}>
+                                Author
+                            </FormLabel>
+                            <Col>
+                                <FormControl
+                                    type="text"
+                                    value={author}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setAuthor(e.target.value) }}
+                                    placeholder=""
+                                />
+                            </Col>
+                        </Row>
+                        <Row className='parameter-row'>
                             <FormLabel column lg={4}>
                                 Audience Background
                             </FormLabel>
@@ -104,7 +118,7 @@ function ParameterView(props: IProps) {
                                 </div>
                             </Col>
                         </Row>
-                        <Row>
+                        <Row className='parameter-row'>
                             <FormLabel column lg={4}>
                                 Level of Details
                             </FormLabel>
@@ -127,40 +141,6 @@ function ParameterView(props: IProps) {
                                 </div>
                             </Col>
                         </Row>
-                        {/* <div className='slider-question-lable'>Audience Background</div>
-                        <div className='slider-question'>
-                            <span className='slider-label-left'>Less Technical</span>
-                            <Slider
-                                step={1}
-                                min={0} max={1}
-                                value={audience}
-                                onChange={(v) => {
-                                    setAudience(v)
-                                }}
-                                style={{
-                                    width: '4rem',
-                                    paddingTop: '1rem'
-                                }}
-                            />
-                            <span className='slider-label-right'>More Technical</span>
-                        </div>
-                        <div className='slider-question-lable'>Level of Details</div>
-                        <div className='slider-question'>
-                            <span className='slider-label-left'>Low</span>
-                            <Slider
-                                step={1}
-                                min={0} max={1}
-                                value={detailLevel}
-                                onChange={(v) => {
-                                    setDetailLevel(v)
-                                }}
-                                style={{
-                                    width: '4rem',
-                                    paddingTop: '1rem'
-                                }}
-                            />
-                            <span className='slider-label-right'>High</span>
-                        </div> */}
                     </Card.Body>
                 </Card>
                 <Button onClick={generate} >
