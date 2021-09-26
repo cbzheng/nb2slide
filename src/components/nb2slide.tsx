@@ -5,7 +5,7 @@ import { SlideAPIInfo } from '../types/slideTypes';
 import { requestAPI } from "../handler";
 import SlideViewer from './slideView';
 import ParameterView from './parameterView';
-// import { mock, mock1 } from '../mockdata';
+import { mock, mock1 } from '../mockdata';
 
 interface IProps {
     notebookCells: Array<StaticNotebookCell>
@@ -79,12 +79,12 @@ function NB2Slide(props: IProps) {
             "detailLevel": detailLevel,
         })
 
-        // if (audience === 0) {
-        //     setSlides(JSON.parse(mock))
-        // } else {
-        //     setSlides(JSON.parse(mock1))
-        // }
-        // return
+        if (audience === 0) {
+            setSlides(JSON.parse(mock))
+        } else {
+            setSlides(JSON.parse(mock1))
+        }
+        return
         await requestAPI<any>('get_slides', {
             body: data,
             method: "POST"
